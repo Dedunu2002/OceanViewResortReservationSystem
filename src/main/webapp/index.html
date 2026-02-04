@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ocean View Resort</title>
+    <style>
+        body { font-family: 'Times New Roman'; padding: 40px; background-color: #f0f8ff; }
+        .box { background: white; padding: 20px; border: 1px solid #000; width: 350px; margin: auto; }
+        input, select { width: 90%; margin: 10px 0; padding: 8px; }
+        button { background: #0047ab; color: white; padding: 10px; width: 100%; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Room Reservation</h2>
+    <form action="booking" method="post">
+        <input type="text" name="guestName" placeholder="Guest Name" required>
+        <input type="text" name="address" placeholder="Address" required>
+        <input type="text" name="contact" placeholder="Contact Number" required>
+        <select name="roomType">
+            <option value="Standard">Standard ($100)</option>
+            <option value="Deluxe">Deluxe ($150)</option>
+        </select>
+        <label>Check-in:</label><input type="date" name="checkIn" required>
+        <label>Check-out:</label><input type="date" name="checkOut" required>
+        <button type="submit">Submit Reservation</button>
+    </form>
+</div>
+</body>
+</html>
