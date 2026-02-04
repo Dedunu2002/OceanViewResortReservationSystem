@@ -5,11 +5,12 @@
          https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
 
+    <display-name>Ocean View Resort Reservation System</display-name>
+
     <servlet>
         <servlet-name>BookingServlet</servlet-name>
         <servlet-class>com.oceanview.resort.BookingServlet</servlet-class>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>BookingServlet</servlet-name>
         <url-pattern>/booking</url-pattern>
@@ -19,9 +20,13 @@
         <servlet-name>ViewReservationsServlet</servlet-name>
         <servlet-class>com.oceanview.resort.ViewReservationsServlet</servlet-class>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>ViewReservationsServlet</servlet-name>
         <url-pattern>/view-reservations</url-pattern>
     </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
 </web-app>
