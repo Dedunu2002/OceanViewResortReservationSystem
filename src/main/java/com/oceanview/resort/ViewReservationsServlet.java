@@ -6,7 +6,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.*;
 
-@WebServlet("/view-reservations")
+
 public class ViewReservationsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
@@ -22,6 +22,7 @@ public class ViewReservationsServlet extends HttpServlet {
             ResultSet rs = stmt.executeQuery("SELECT * FROM reservations");
 
             while (rs.next()) {
+                // Inside the while (rs.next()) loop
                 out.println("<tr>");
                 out.println("<td>" + rs.getInt("reservation_number") + "</td>");
                 out.println("<td>" + rs.getString("guest_name") + "</td>");
@@ -29,6 +30,8 @@ public class ViewReservationsServlet extends HttpServlet {
                 out.println("<td>" + rs.getString("check_in") + "</td>");
                 out.println("<td>" + rs.getString("check_out") + "</td>");
                 out.println("<td>$" + rs.getDouble("total_bill") + "</td>");
+
+                out.println("<td><a href='delete-reservation?id=" + rs.getInt("reservation_number") + "' style='color:red;' onclick='return confirm(\"Are you sure?\")'>Cancel</a></td>");
                 out.println("</tr>");
             }
         } catch (Exception e) {
