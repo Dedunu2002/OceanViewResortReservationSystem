@@ -34,7 +34,17 @@ public class BookingServlet extends HttpServlet {
             ps.setDouble(7, total);
             ps.executeUpdate();
 
-            response.getWriter().println("<h1>Reservation Success!</h1><p>Total Bill: $" + total + "</p>");
+            // Refined Success Page Output
+            response.setContentType("text/html");
+            response.getWriter().println("<html><head><title>Success</title>");
+            response.getWriter().println("<style>body{font-family:'Times New Roman'; text-align:center; padding:50px; background:#f0f8ff;} .card{background:white; padding:30px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); display:inline-block;} .btn{display:inline-block; margin-top:20px; padding:10px 20px; background:#0047ab; color:white; text-decoration:none; border-radius:5px;}</style>");
+            response.getWriter().println("</head><body><div class='card'>");
+            response.getWriter().println("<h1 style='color:green;'>Reservation Confirmed!</h1>");
+            response.getWriter().println("<p>Thank you, <strong>" + name + "</strong>. Your booking has been saved.</p>");
+            response.getWriter().println("<h3>Total Amount Due: $" + total + "</h3>");
+            response.getWriter().println("<a href='index.html' class='btn'>Make Another Booking</a>");
+            response.getWriter().println("</div></body></html>");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

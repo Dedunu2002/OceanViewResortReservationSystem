@@ -14,4 +14,14 @@
         <servlet-name>BookingServlet</servlet-name>
         <url-pattern>/booking</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ViewReservationsServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.ViewReservationsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ViewReservationsServlet</servlet-name>
+        <url-pattern>/view-reservations</url-pattern>
+    </servlet-mapping>
 </web-app>
