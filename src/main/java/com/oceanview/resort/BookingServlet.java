@@ -19,7 +19,7 @@ public class BookingServlet extends HttpServlet {
 
         // Calculate Bill
         long nights = ChronoUnit.DAYS.between(LocalDate.parse(in), LocalDate.parse(out));
-        double price = type.equals("Deluxe") ? 150.0 : 100.0;
+        double price = type.equals("Deluxe") ? 15000.0 : 10000.0;
         double total = nights * price;
 
         try (Connection conn = DBUtil.getConnection()) {
@@ -41,7 +41,7 @@ public class BookingServlet extends HttpServlet {
             response.getWriter().println("</head><body><div class='card'>");
             response.getWriter().println("<h1 style='color:green;'>Reservation Confirmed!</h1>");
             response.getWriter().println("<p>Thank you, <strong>" + name + "</strong>. Your booking has been saved.</p>");
-            response.getWriter().println("<h3>Total Amount Due: $" + total + "</h3>");
+            response.getWriter().println("<h3>Total Amount Due: Rs." + total + "</h3>");
             response.getWriter().println("<a href='index.html' class='btn'>Make Another Booking</a>");
             response.getWriter().println("</div></body></html>");
 

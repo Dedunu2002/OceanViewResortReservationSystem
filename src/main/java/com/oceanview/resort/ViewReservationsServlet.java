@@ -29,7 +29,7 @@ public class ViewReservationsServlet extends HttpServlet {
                 out.println("<td>" + rs.getString("room_type") + "</td>");
                 out.println("<td>" + rs.getString("check_in") + "</td>");
                 out.println("<td>" + rs.getString("check_out") + "</td>");
-                out.println("<td>$" + rs.getDouble("total_bill") + "</td>");
+                out.println("<td>Rs." + rs.getDouble("total_bill") + "</td>");
 
                 out.println("<td><a href='delete-reservation?id=" + rs.getInt("reservation_number") + "' style='color:red;' onclick='return confirm(\"Are you sure?\")'>Cancel</a></td>");
                 out.println("</tr>");
