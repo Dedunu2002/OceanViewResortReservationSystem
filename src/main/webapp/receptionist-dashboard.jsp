@@ -26,7 +26,7 @@
         <h1>Guest Management Hub</h1>
         <div class="menu-grid">
             <a href="index.html" class="menu-item"><h3>Register Guest</h3></a>
-            <a href="search.html" class="menu-item"><h3>Search Booking</h3></a>
+            <a href="view-reservations" class="menu-item"><h3>View All Booking</h3></a>
             <a href="help.html" class="menu-item"><h3>Quick Start Guide</h3></a>
         </div>
     </div>
