@@ -8,12 +8,29 @@ import java.sql.*;
 
 public class ViewReservationsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("login.html");
+            return;
+        }
+
+        String role = (String) session.getAttribute("role");
         String searchQuery = request.getParameter("searchQuery");
+
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
         out.println("<html><head><title>Manage Reservations</title>");
-        out.println("<style>body{font-family:Arial; padding:20px;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ddd; padding:10px; text-align:left;} th{background:#2c3e50; color:white;} .search-bar{margin-bottom:20px;}</style></head><body>");
+        out.println("<style>body{font-family:Arial; padding:20px;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ddd; padding:10px; text-align:left;} th{background:#2c3e50; color:white;} .search-bar{margin-bottom:20px;} .nav-top{background:#f4f4f4; padding:10px; margin-bottom:20px; border-radius:5px;}</style></head><body>");
+
+        // Dynamic Menu Bar
+        out.println("<div class='nav-top'>");
+        String homePage = "ADMIN".equals(role) ? "admin-dashboard.jsp" : "receptionist-dashboard.jsp";
+        out.println("<b>Navigation:</b> <a href='" + homePage + "'>Dashboard</a> | ");
+        out.println("<a href='index.html'>New Booking</a> | ");
+        out.println("<a href='help.html'>Help</a> | ");
+        out.println("<a href='logout' style='color:red;'>Logout</a>");
+        out.println("</div>");
 
         out.println("<h2>Ocean View Reservation Management</h2>");
 
@@ -32,7 +49,6 @@ public class ViewReservationsServlet extends HttpServlet {
             PreparedStatement ps;
 
             if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                // Filtered Query
                 sql = "SELECT * FROM reservations WHERE reservation_number = ? OR guest_name LIKE ?";
                 ps = conn.prepareStatement(sql);
                 int searchId = 0;
@@ -40,7 +56,6 @@ public class ViewReservationsServlet extends HttpServlet {
                 ps.setInt(1, searchId);
                 ps.setString(2, "%" + searchQuery + "%");
             } else {
-                // View All Query
                 sql = "SELECT * FROM reservations";
                 ps = conn.prepareStatement(sql);
             }
@@ -55,12 +70,17 @@ public class ViewReservationsServlet extends HttpServlet {
                 out.println("<td>" + rs.getString("check_in") + "</td>");
                 out.println("<td>" + rs.getString("check_out") + "</td>");
                 out.println("<td>Rs." + rs.getDouble("total_bill") + "</td>");
-                // The Delete link we made earlier
-                out.println("<td><a href='delete-reservation?id=" + id + "' style='color:red;' onclick='return confirm(\"Cancel this booking?\")'>Cancel</a></td>");
+
+                // Only ADMIN can see the Delete (Cancel) action
+                if ("ADMIN".equals(role)) {
+                    out.println("<td><a href='delete-reservation?id=" + id + "' style='color:red;' onclick='return confirm(\"Cancel this booking?\")'>Cancel</a></td>");
+                } else {
+                    out.println("<td><span style='color:gray;'>View Only</span></td>");
+                }
                 out.println("</tr>");
             }
         } catch (SQLException e) { e.printStackTrace(); }
 
-        out.println("</table><br><a href='receptionist-dashboard.jsp'>Back to Dashboard</a></body></html>");
+        out.println("</table><br><a href='" + homePage + "'>Back to Dashboard</a></body></html>");
     }
 }
