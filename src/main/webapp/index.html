@@ -1,29 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Ocean View Resort</title>
+    <meta charset="UTF-8">
+    <title>Guest Registration | Ocean View</title>
     <style>
-        body { font-family: 'Times New Roman'; padding: 40px; background-color: #f0f8ff; }
-        .box { background: white; padding: 20px; border: 1px solid #000; width: 350px; margin: auto; }
-        input, select { width: 90%; margin: 10px 0; padding: 8px; }
-        button { background: #0047ab; color: white; padding: 10px; width: 100%; cursor: pointer; }
+        :root {
+            --primary: #0A2540; --secondary: #1E6F9F; --accent: #C9A24D;
+            --bg: #F5F7FA; --text-main: #1C1C1C;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 50px; }
+        .form-container {
+            max-width: 600px; margin: 0 auto; background: white; padding: 40px;
+            border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 5px solid var(--primary);
+        }
+        h2 { color: var(--primary); text-transform: uppercase; letter-spacing: 2px; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 8px; text-transform: uppercase; }
+        input, select {
+            width: 100%; padding: 12px; border: 1px solid #E5E7EB; border-radius: 3px;
+            box-sizing: border-box; font-size: 14px; background: #FCFDFF;
+        }
+        input:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(30, 111, 159, 0.1); }
+        button {
+            width: 100%; padding: 16px; background: var(--accent); color: white; border: none;
+            border-radius: 3px; cursor: pointer; font-size: 14px; font-weight: bold;
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; margin-top: 10px;
+        }
+        button:hover { background: #B08D3E; transform: translateY(-1px); }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: var(--text-muted); text-decoration: none; font-size: 13px; }
     </style>
 </head>
 <body>
-<div class="box">
-    <h2>Room Reservation</h2>
-    <form action="booking" method="post">
-        <input type="text" name="guestName" placeholder="Guest Name" required>
-        <input type="text" name="address" placeholder="Address" required>
-        <input type="text" name="contact" placeholder="Contact Number" required>
-        <select name="roomType">
-            <option value="Standard">Standard (Rs.10000)</option>
-            <option value="Deluxe">Deluxe (Rs.15000)</option>
-        </select>
-        <label>Check-in:</label><input type="date" name="checkIn" required>
-        <label>Check-out:</label><input type="date" name="checkOut" required>
-        <button type="submit">Submit Reservation</button>
+<div class="form-container">
+    <h2>Guest Registration</h2>
+    <form action="booking" method="POST">
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="guest_name" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+            <label>Room Category</label>
+            <select name="room_type">
+                <option value="Standard">Standard Garden View</option>
+                <option value="Deluxe">Deluxe Ocean Wing</option>
+                <option value="Luxury">Luxury Presidential Suite</option>
+            </select>
+        </div>
+        <div class="form-group" style="display: flex; gap: 20px;">
+            <div style="flex: 1;">
+                <label>Check-in Date</label>
+                <input type="date" name="check_in" required>
+            </div>
+            <div style="flex: 1;">
+                <label>Check-out Date</label>
+                <input type="date" name="check_out" required>
+            </div>
+        </div>
+        <button type="submit">Confirm Reservation</button>
     </form>
+    <a href="receptionist-dashboard.jsp" class="back-link">Return to Reception Hub</a>
 </div>
 </body>
 </html>

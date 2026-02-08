@@ -16,71 +16,72 @@ public class ViewReservationsServlet extends HttpServlet {
 
         String role = (String) session.getAttribute("role");
         String searchQuery = request.getParameter("searchQuery");
+        String homePage = "ADMIN".equals(role) ? "admin-dashboard.jsp" : "receptionist-dashboard.jsp";
 
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
-        out.println("<html><head><title>Manage Reservations</title>");
-        out.println("<style>body{font-family:Arial; padding:20px;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ddd; padding:10px; text-align:left;} th{background:#2c3e50; color:white;} .search-bar{margin-bottom:20px;} .nav-top{background:#f4f4f4; padding:10px; margin-bottom:20px; border-radius:5px;}</style></head><body>");
+        out.println("<html><head><title>Reservations | Ocean View</title>");
+        out.println("<style>");
+        out.println(":root { --primary: #0A2540; --secondary: #1E6F9F; --accent: #C9A24D; --bg: #F5F7FA; }");
+        out.println("body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 40px; margin: 0; }");
+        out.println(".top-nav { background: var(--primary); color: white; padding: 15px 30px; margin: -40px -40px 40px -40px; display: flex; justify-content: space-between; align-items: center; }");
+        out.println("table { width: 100%; border-collapse: collapse; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }");
+        out.println("th { background: #f8fafc; color: var(--primary); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; padding: 20px; text-align: left; border-bottom: 2px solid var(--bg); }");
+        out.println("td { padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; }");
+        out.println(".search-box { margin-bottom: 30px; display: flex; gap: 10px; }");
+        out.println("input[type='text'] { padding: 12px; border: 1px solid #e2e8f0; border-radius: 4px; width: 300px; }");
+        out.println("button { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }");
+        out.println(".btn-cancel { color: #ef4444; text-decoration: none; font-weight: bold; font-size: 12px; }");
+        out.println("</style></head><body>");
 
-        // Dynamic Menu Bar
-        out.println("<div class='nav-top'>");
-        String homePage = "ADMIN".equals(role) ? "admin-dashboard.jsp" : "receptionist-dashboard.jsp";
-        out.println("<b>Navigation:</b> <a href='" + homePage + "'>Dashboard</a> | ");
-        out.println("<a href='index.html'>New Booking</a> | ");
-        out.println("<a href='help.html'>Help</a> | ");
-        out.println("<a href='logout' style='color:red;'>Logout</a>");
+        // Top Navigation
+        out.println("<div class='top-nav'>");
+        out.println("<span style='letter-spacing:1px; font-weight:bold;'>RESERVATION MANAGEMENT</span>");
+        out.println("<a href='" + homePage + "' style='color:var(--accent); text-decoration:none; font-size:13px;'>DASHBOARD</a>");
         out.println("</div>");
 
-        out.println("<h2>Ocean View Reservation Management</h2>");
+        // Search Bar
+        out.println("<form action='view-reservations' method='GET' class='search-box'>");
+        out.println("<input type='text' name='searchQuery' placeholder='Search Guest or ID...' value='" + (searchQuery != null ? searchQuery : "") + "'>");
+        out.println("<button type='submit'>FILTER</button>");
+        out.println("<a href='view-reservations' style='padding:12px; color:var(--secondary); text-decoration:none;'>Clear</a>");
+        out.println("</form>");
 
-        // Integrated Search Form
-        out.println("<div class='search-bar'>");
-        out.println("<form action='view-reservations' method='GET'>");
-        out.println("<input type='text' name='searchQuery' placeholder='Search by Name or ID...' value='" + (searchQuery != null ? searchQuery : "") + "'>");
-        out.println("<button type='submit'>Filter</button>");
-        out.println("<a href='view-reservations' style='margin-left:10px;'>Clear</a>");
-        out.println("</form></div>");
-
-        out.println("<table><tr><th>ID</th><th>Guest Name</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Bill</th><th>Actions</th></tr>");
+        out.println("<table><tr><th>Ref ID</th><th>Guest Name</th><th>Room Wing</th><th>Arrival</th><th>Departure</th><th>Total Bill</th><th>Actions</th></tr>");
 
         try (Connection conn = DBUtil.getConnection()) {
-            String sql;
-            PreparedStatement ps;
+            String sql = (searchQuery != null && !searchQuery.trim().isEmpty())
+                    ? "SELECT * FROM reservations WHERE reservation_number = ? OR guest_name LIKE ?"
+                    : "SELECT * FROM reservations";
 
+            PreparedStatement ps = conn.prepareStatement(sql);
             if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                sql = "SELECT * FROM reservations WHERE reservation_number = ? OR guest_name LIKE ?";
-                ps = conn.prepareStatement(sql);
-                int searchId = 0;
-                try { searchId = Integer.parseInt(searchQuery); } catch (NumberFormatException e) {}
-                ps.setInt(1, searchId);
+                int id = 0; try { id = Integer.parseInt(searchQuery); } catch (Exception e) {}
+                ps.setInt(1, id);
                 ps.setString(2, "%" + searchQuery + "%");
-            } else {
-                sql = "SELECT * FROM reservations";
-                ps = conn.prepareStatement(sql);
             }
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt("reservation_number");
+                int resId = rs.getInt("reservation_number");
                 out.println("<tr>");
-                out.println("<td>" + id + "</td>");
-                out.println("<td>" + rs.getString("guest_name") + "</td>");
+                out.println("<td>#OR-" + resId + "</td>");
+                out.println("<td><strong>" + rs.getString("guest_name") + "</strong></td>");
                 out.println("<td>" + rs.getString("room_type") + "</td>");
                 out.println("<td>" + rs.getString("check_in") + "</td>");
                 out.println("<td>" + rs.getString("check_out") + "</td>");
-                out.println("<td>Rs." + rs.getDouble("total_bill") + "</td>");
+                out.println("<td>Rs. " + String.format("%.2f", rs.getDouble("total_bill")) + "</td>");
 
-                // Only ADMIN can see the Delete (Cancel) action
                 if ("ADMIN".equals(role)) {
-                    out.println("<td><a href='delete-reservation?id=" + id + "' style='color:red;' onclick='return confirm(\"Cancel this booking?\")'>Cancel</a></td>");
+                    out.println("<td><a href='delete-reservation?id=" + resId + "' class='btn-cancel' onclick='return confirm(\"Confirm cancellation?\")'>CANCEL</a></td>");
                 } else {
-                    out.println("<td><span style='color:gray;'>View Only</span></td>");
+                    out.println("<td><span style='color:#94a3b8; font-size:11px;'>READ ONLY</span></td>");
                 }
                 out.println("</tr>");
             }
         } catch (SQLException e) { e.printStackTrace(); }
 
-        out.println("</table><br><a href='" + homePage + "'>Back to Dashboard</a></body></html>");
+        out.println("</table></body></html>");
     }
 }
