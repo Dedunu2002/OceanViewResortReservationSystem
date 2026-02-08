@@ -32,6 +32,7 @@ public class ViewReservationsServlet extends HttpServlet {
         out.println(".search-box { margin-bottom: 30px; display: flex; gap: 10px; }");
         out.println("input[type='text'] { padding: 12px; border: 1px solid #e2e8f0; border-radius: 4px; width: 300px; }");
         out.println("button { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }");
+        out.println(".btn-edit { color: var(--secondary); text-decoration: none; font-weight: bold; font-size: 12px; margin-right: 15px; }");
         out.println(".btn-cancel { color: #ef4444; text-decoration: none; font-weight: bold; font-size: 12px; }");
         out.println("</style></head><body>");
 
@@ -73,11 +74,16 @@ public class ViewReservationsServlet extends HttpServlet {
                 out.println("<td>" + rs.getString("check_out") + "</td>");
                 out.println("<td>Rs. " + String.format("%.2f", rs.getDouble("total_bill")) + "</td>");
 
+                out.println("<td>");
+                // EDIT Button: Available to everyone
+                out.println("<a href='edit-reservation?id=" + resId + "' class='btn-edit'>EDIT</a>");
+
+                // CANCEL Button: Restrict to ADMIN only
                 if ("ADMIN".equals(role)) {
-                    out.println("<td><a href='delete-reservation?id=" + resId + "' class='btn-cancel' onclick='return confirm(\"Confirm cancellation?\")'>CANCEL</a></td>");
-                } else {
-                    out.println("<td><span style='color:#94a3b8; font-size:11px;'>READ ONLY</span></td>");
+                    out.println("<a href='delete-reservation?id=" + resId + "' class='btn-cancel' onclick='return confirm(\"Confirm cancellation?\")'>CANCEL</a>");
                 }
+                out.println("</td>");
+
                 out.println("</tr>");
             }
         } catch (SQLException e) { e.printStackTrace(); }

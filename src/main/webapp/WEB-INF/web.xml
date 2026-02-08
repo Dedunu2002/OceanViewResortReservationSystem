@@ -52,6 +52,24 @@
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>EditReservationServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.EditReservationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditReservationServlet</servlet-name>
+        <url-pattern>/edit-reservation</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UpdateReservationServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.UpdateReservationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateReservationServlet</servlet-name>
+        <url-pattern>/update-reservation</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>login.html</welcome-file>
     </welcome-file-list>
