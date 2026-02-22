@@ -38,7 +38,10 @@ public class ViewReservationsServlet extends HttpServlet {
 
         // Top Navigation
         out.println("<div class='top-nav'>");
+        out.println("<div style='display:flex; align-items:center;'>");
+        out.println("<img src='logo.png' style='height:30px; margin-right:15px;' alt='Logo'>");
         out.println("<span style='letter-spacing:1px; font-weight:bold;'>RESERVATION MANAGEMENT</span>");
+        out.println("</div>");
         out.println("<a href='" + homePage + "' style='color:var(--accent); text-decoration:none; font-size:13px;'>DASHBOARD</a>");
         out.println("</div>");
 
@@ -49,7 +52,7 @@ public class ViewReservationsServlet extends HttpServlet {
         out.println("<a href='view-reservations' style='padding:12px; color:var(--secondary); text-decoration:none;'>Clear</a>");
         out.println("</form>");
 
-        out.println("<table><tr><th>Ref ID</th><th>Guest Name</th><th>Room Wing</th><th>Arrival</th><th>Departure</th><th>Total Bill</th><th>Actions</th></tr>");
+        out.println("<table><tr><th>Ref ID</th><th>Guest Name</th><th>Contact Number</th><th>Address</th><th>Email Address</th><th>Room Wing</th><th>Arrival</th><th>Departure</th><th>Total Bill</th><th>Actions</th></tr>");
 
         try (Connection conn = DBUtil.getConnection()) {
             String sql = (searchQuery != null && !searchQuery.trim().isEmpty())
@@ -69,6 +72,9 @@ public class ViewReservationsServlet extends HttpServlet {
                 out.println("<tr>");
                 out.println("<td>#OR-" + resId + "</td>");
                 out.println("<td><strong>" + rs.getString("guest_name") + "</strong></td>");
+                out.println("<td>" + rs.getString("contact_number") + "</td>");
+                out.println("<td>" + rs.getString("address") + "</td>");
+                out.println("<td>" + rs.getString("email") + "</td>");
                 out.println("<td>" + rs.getString("room_type") + "</td>");
                 out.println("<td>" + rs.getString("check_in") + "</td>");
                 out.println("<td>" + rs.getString("check_out") + "</td>");

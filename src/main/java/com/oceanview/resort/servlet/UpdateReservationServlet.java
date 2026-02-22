@@ -10,6 +10,9 @@ import java.time.temporal.ChronoUnit;
 public class UpdateReservationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("res_id");
+        String contact = request.getParameter("contact_number");
+        String email = request.getParameter("email");
+        String address = request.getParameter("address");
         String type = request.getParameter("room_type");
         String check_out_str = request.getParameter("check_out");
 
@@ -29,11 +32,15 @@ public class UpdateReservationServlet extends HttpServlet {
                 double total = nights * price;
 
                 // 2. Update the record
-                PreparedStatement ps2 = conn.prepareStatement("UPDATE reservations SET room_type=?, check_out=?, total_bill=? WHERE reservation_number=?");
-                ps2.setString(1, type);
-                ps2.setString(2, check_out_str);
-                ps2.setDouble(3, total);
-                ps2.setString(4, id);
+                PreparedStatement ps2 = conn.prepareStatement("UPDATE reservations SET contact_number=?, email=?, address=?, room_type=?, check_out=?, total_bill=? WHERE reservation_number=?");
+                ps2.setString(1, contact);
+                ps2.setString(2, email);
+                ps2.setString(3, address);
+
+                ps2.setString(4, type);
+                ps2.setString(5, check_out_str);
+                ps2.setDouble(6, total);
+                ps2.setString(7, id);
                 ps2.executeUpdate();
             }
             response.sendRedirect("view-reservations?msg=updated");

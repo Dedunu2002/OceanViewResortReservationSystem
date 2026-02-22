@@ -4,57 +4,90 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class BookingServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. Updated Parameter Names to match the new luxury HTML form
+        // 1. Retrieve parameters from the form
         String name = request.getParameter("guest_name");
+        String contact = request.getParameter("contact_number");
+        String email = request.getParameter("email");
+        String addr = request.getParameter("address");
         String type = request.getParameter("room_type");
         String check_in_str = request.getParameter("check_in");
         String check_out_str = request.getParameter("check_out");
 
-        // These are optional depending on your latest form fields
-        String addr = request.getParameter("address") != null ? request.getParameter("address") : "N/A";
-        String contact = request.getParameter("contact") != null ? request.getParameter("contact") : "N/A";
-
-        // 2. Safety Guard: Prevent NullPointerException
+        // 2. Safety Guard: Prevent null or empty date strings
         if (check_in_str == null || check_out_str == null || check_in_str.isEmpty() || check_out_str.isEmpty()) {
             response.sendRedirect("index.html?error=invalid_dates");
             return;
         }
 
         try {
-            // 3. Parsing Dates and Calculating Bill
+            // 3. Parse dates and calculate the stay duration
             LocalDate start = LocalDate.parse(check_in_str);
             LocalDate end = LocalDate.parse(check_out_str);
             long nights = ChronoUnit.DAYS.between(start, end);
-
-            // Validation: Must stay at least 1 night
             if (nights <= 0) nights = 1;
 
-            double price = 10000.0; // Default Standard
-            if ("Deluxe".equals(type)) price = 15000.0;
-            if ("Luxury".equals(type)) price = 30000.0;
-
-            double total = nights * price;
-
             try (Connection conn = DBUtil.getConnection()) {
-                String sql = "INSERT INTO reservations (guest_name, address, contact_number, room_type, check_in, check_out, total_bill) VALUES (?,?,?,?,?,?,?)";
+
+                // --- 4. FETCH DYNAMIC PRICE AND CAPACITY FROM DATABASE ---
+                double price = 0;
+                int maxCapacity = 0;
+
+                String rateSql = "SELECT price_per_night, max_capacity FROM room_rates WHERE room_type = ?";
+                PreparedStatement ratePs = conn.prepareStatement(rateSql);
+                ratePs.setString(1, type);
+                ResultSet rateRs = ratePs.executeQuery();
+
+                if (rateRs.next()) {
+                    price = rateRs.getDouble("price_per_night");
+                    maxCapacity = rateRs.getInt("max_capacity");
+                } else {
+                    // Fallback if the room type isn't found in the new table
+                    response.sendRedirect("index.html?error=invalid_room_type");
+                    return;
+                }
+
+                // --- 5. ROOM AVAILABILITY CHECK LOGIC ---
+                // Uses the maxCapacity fetched from the database
+                String checkSql = "SELECT COUNT(*) FROM reservations " +
+                        "WHERE room_type = ? " +
+                        "AND (check_in < ? AND check_out > ?)";
+
+                PreparedStatement checkPs = conn.prepareStatement(checkSql);
+                checkPs.setString(1, type);
+                checkPs.setString(2, check_out_str);
+                checkPs.setString(3, check_in_str);
+
+                ResultSet rs = checkPs.executeQuery();
+                if (rs.next()) {
+                    int occupiedRooms = rs.getInt(1);
+                    if (occupiedRooms >= maxCapacity) {
+                        // Redirect with both error and type for the JavaScript alert
+                        response.sendRedirect("index.html?error=no_availability&type=" + type);
+                        return;
+                    }
+                }
+
+                // --- 6. PROCEED WITH BOOKING ---
+                double total = nights * price;
+                String sql = "INSERT INTO reservations (guest_name, contact_number, email, address, room_type, check_in, check_out, total_bill) VALUES (?,?,?,?,?,?,?,?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setString(1, name);
-                ps.setString(2, addr);
-                ps.setString(3, contact);
-                ps.setString(4, type);
-                ps.setString(5, check_in_str);
-                ps.setString(6, check_out_str);
-                ps.setDouble(7, total);
+                ps.setString(2, contact);
+                ps.setString(3, email);
+                ps.setString(4, addr);
+                ps.setString(5, type);
+                ps.setString(6, check_in_str);
+                ps.setString(7, check_out_str);
+                ps.setDouble(8, total);
                 ps.executeUpdate();
 
-                // 4. Refined Luxury Success Page
+                // 7. Generate Success Response
                 response.setContentType("text/html");
                 PrintWriter out = response.getWriter();
                 out.println("<html><head><title>Reservation Confirmed | Ocean View</title>");
