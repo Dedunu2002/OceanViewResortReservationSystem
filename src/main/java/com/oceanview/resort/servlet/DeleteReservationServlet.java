@@ -1,7 +1,7 @@
-package com.oceanview.resort;
+package com.oceanview.resort.servlet;
 
+import com.oceanview.resort.util.DBUtil;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.*;

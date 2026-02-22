@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.sql.*, com.oceanview.resort.DBUtil" %>
+<%@ page import="java.sql.*, com.oceanview.resort.util.DBUtil" %>
 <%
     if (session.getAttribute("user") == null || !"RECEPTIONIST".equals(session.getAttribute("role"))) {
         response.sendRedirect("login.html");

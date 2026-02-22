@@ -9,7 +9,7 @@
 
     <servlet>
         <servlet-name>BookingServlet</servlet-name>
-        <servlet-class>com.oceanview.resort.BookingServlet</servlet-class>
+        <servlet-class>com.oceanview.resort.servlet.BookingServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>BookingServlet</servlet-name>
@@ -18,7 +18,7 @@
 
     <servlet>
         <servlet-name>ViewReservationsServlet</servlet-name>
-        <servlet-class>com.oceanview.resort.ViewReservationsServlet</servlet-class>
+        <servlet-class>com.oceanview.resort.servlet.ViewReservationsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ViewReservationsServlet</servlet-name>
@@ -27,7 +27,7 @@
 
     <servlet>
         <servlet-name>DeleteReservationServlet</servlet-name>
-        <servlet-class>com.oceanview.resort.DeleteReservationServlet</servlet-class>
+        <servlet-class>com.oceanview.resort.servlet.DeleteReservationServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DeleteReservationServlet</servlet-name>
@@ -36,7 +36,7 @@
 
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>com.oceanview.resort.LoginServlet</servlet-class>
+        <servlet-class>com.oceanview.resort.servlet.LoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -45,7 +45,7 @@
 
     <servlet>
         <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>com.oceanview.resort.LogoutServlet</servlet-class>
+        <servlet-class>com.oceanview.resort.servlet.LogoutServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
@@ -54,7 +54,7 @@
 
     <servlet>
         <servlet-name>EditReservationServlet</servlet-name>
-        <servlet-class>com.oceanview.resort.EditReservationServlet</servlet-class>
+        <servlet-class>com.oceanview.resort.servlet.EditReservationServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EditReservationServlet</servlet-name>
@@ -63,12 +63,63 @@
 
     <servlet>
         <servlet-name>UpdateReservationServlet</servlet-name>
-        <servlet-class>com.oceanview.resort.UpdateReservationServlet</servlet-class>
+        <servlet-class>com.oceanview.resort.servlet.UpdateReservationServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UpdateReservationServlet</servlet-name>
         <url-pattern>/update-reservation</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>DailySummaryServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.DailySummaryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DailySummaryServlet</servlet-name>
+        <url-pattern>/daily-summary</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddStaffServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.AddStaffServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddStaffServlet</servlet-name>
+        <url-pattern>/AddStaffServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DeleteStaffServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.DeleteStaffServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteStaffServlet</servlet-name>
+        <url-pattern>/DeleteStaffServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RoomStatusServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.RoomStatusServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RoomStatusServlet</servlet-name>
+        <url-pattern>/room-status</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UpdateRatesServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.UpdateRatesServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UpdateRatesServlet</servlet-name>
+        <url-pattern>/UpdateRatesServlet</url-pattern>
+    </servlet-mapping>
+
+
+
+
+
+
 
     <welcome-file-list>
         <welcome-file>login.html</welcome-file>

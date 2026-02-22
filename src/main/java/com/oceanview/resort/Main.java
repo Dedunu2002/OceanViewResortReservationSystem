@@ -1,5 +1,7 @@
 package com.oceanview.resort;
 
+import com.oceanview.resort.util.DBUtil;
+
 import java.sql.Connection;
 
 public class Main {

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.sql.*, com.oceanview.resort.DBUtil" %>
+<%@ page import="java.sql.*, com.oceanview.resort.util.DBUtil" %>
 <%
     if (session.getAttribute("user") == null || !"ADMIN".equals(session.getAttribute("role"))) {
         response.sendRedirect("login.html");
@@ -39,6 +39,55 @@
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        /* Container for the cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        /* Individual Action Card Style */
+        .action-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none; /* Removes underline from <a> */
+            color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        /* Hover Effect: Luxury Lift */
+        .action-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+            border-top-color: var(--accent);
+        }
+
+        .action-card h3 {
+            margin: 15px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .action-card p {
+            color: #64748b; /* Muted text color */
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Icon Styling */
+        .action-card .icon-wrapper {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: block;
+        }
         .card { background: white; padding: 30px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 4px solid var(--accent); }
         .card h3 { font-size: 12px; text-transform: uppercase; color: var(--secondary); margin: 0; letter-spacing: 1px; }
         .stat-value { font-size: 32px; font-weight: 600; margin-top: 10px; color: var(--primary); }
@@ -55,13 +104,49 @@
         <a href="help.html">Operational Guide</a>
         <a href="logout" class="btn-logout">Exit System</a>
     </div>
+
     <div class="main-content">
         <div class="header">
             <h1>Executive Overview</h1>
             <span style="color: var(--secondary);">Logged in as: <strong>${user}</strong></span>
         </div>
 
+        <div class="dashboard-grid">
+            <a href="daily-summary" class="action-card">
+                <div class="icon-wrapper">📊</div>
+                <h3>Daily Summary</h3>
+                <p>Revenue & Guest Occupancy</p>
+            </a>
+
+            <a href="manage-staff.jsp" class="action-card">
+                <div style="font-size: 32px;">👥</div>
+                <h3>Manage Staff</h3>
+                <p>Add, edit, or remove staff access.</p>
+            </a>
+
+            <a href="view-reservations" class="action-card">
+                <div class="icon-wrapper">📅</div>
+                <h3>Manage Bookings</h3>
+                <p>Search and Edit Guests</p>
+            </a>
+
+            <a href="room-status" class="action-card">
+                <div style="font-size: 32px;">🏨</div>
+                <h3>Live Inventory</h3>
+                <p>Check real-time room availability.</p>
+            </a>
+
+            <a href="update-rates.jsp" class="action-card">
+                            <div style="font-size: 32px;">🏨</div>
+                            <h3>Manage Room Rates</h3>
+                            <p>Update Room Rates</p>
+            </a>
+        </div>
+
+        <br><br>
+
         <div class="stats-grid">
+
             <div class="card">
                 <h3>Total Gross Revenue</h3>
                 <div class="stat-value">Rs. <%= String.format("%.2f", totalRevenue) %></div>

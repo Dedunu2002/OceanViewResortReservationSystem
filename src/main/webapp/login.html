@@ -16,27 +16,27 @@
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: var(--text-main);
-        }
+    font-family: 'Segoe UI', sans-serif;
+    /* Replace the URL with a real image path or Unsplash link */
+    background: linear-gradient(rgba(10, 37, 64, 0.6), rgba(10, 37, 64, 0.6)),
+                url('images/background.png');background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
 
-        /* Container with a premium, subtle shadow */
-        .login-container {
-            background: white;
-            padding: 50px 40px;
-            border-radius: 4px; /* Slightly sharper corners feel more architectural/luxury */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            border-top: 5px solid var(--primary); /* Deep Navy Top border for brand identity */
-        }
+.login-container {
+    background: rgba(255, 255, 255, 0.95); /* Slight transparency for a glass look */
+    backdrop-filter: blur(10px); /* Modern luxury effect */
+    padding: 50px 40px;
+    border-radius: 4px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 400px;
+}
 
         h2 {
             color: var(--primary);
@@ -118,7 +118,7 @@
     <h2>Ocean View</h2>
     <p class="subtitle">STAFF MANAGEMENT PORTAL</p>
 
-    <form action="login" method="POST">
+    <form action="login" method="POST" novalidate>
         <div class="form-group">
             <label>Username</label>
             <input type="text" name="username" placeholder="Enter your credentials" required>
@@ -136,5 +136,36 @@
         &copy; 2026 Ocean View Resort & Spa. <br> Private Access Only.
     </div>
 </div>
+
+<script>
+    document.querySelector("form").addEventListener("submit", function(event) {
+        const username = document.getElementsByName("username")[0].value.trim();
+        const password = document.getElementsByName("password")[0].value.trim();
+
+        if (username === "") {
+            alert("Username cannot be empty.");
+            event.preventDefault();
+            return;
+        }
+
+        if (password === "") {
+            alert("Password cannot be empty.");
+            event.preventDefault();
+            return;
+        }
+
+        if (username.length < 4) {
+            alert("Username must be at least 4 characters long.");
+            event.preventDefault(); // Stop form submission
+            return;
+        }
+
+        if (password.length < 6) {
+            alert("Password must be at least 6 characters long for security.");
+            event.preventDefault();
+            return;
+        }
+    });
+</script>
 </body>
 </html>
