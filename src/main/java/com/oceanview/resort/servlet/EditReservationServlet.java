@@ -28,7 +28,7 @@ public class EditReservationServlet extends HttpServlet {
                 out.println("<input type='text' name='guest_name' value='" + rs.getString("guest_name") + "' style='width:100%; padding:10px; margin-bottom:20px;' readonly>");
 
                 out.println("<label style='display:block; font-size:12px; font-weight:bold; margin-bottom:5px;'>CONTACT NUMBER</label>");
-                out.println("<input type='text' name='contact' value='" + rs.getString("contact_number") + "' style='width:100%; padding:10px; margin-bottom:20px;'>");
+                out.println("<input type='text' name='contact_number' value='" + rs.getString("contact_number") + "' style='width:100%; padding:10px; margin-bottom:20px;'>");
 
                 out.println("<label style='display:block; font-size:12px; font-weight:bold; margin-bottom:5px;'>EMAIL ADDRESS</label>");
                 out.println("<input type='email' name='email' value='" + rs.getString("email") + "' style='width:100%; padding:10px; margin-bottom:20px;'>");
