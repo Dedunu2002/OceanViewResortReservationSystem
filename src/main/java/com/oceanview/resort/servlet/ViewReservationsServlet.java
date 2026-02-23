@@ -42,8 +42,7 @@ public class ViewReservationsServlet extends HttpServlet {
         // Top Navigation
         out.println("<div class='top-nav'>");
         out.println("<div style='display:flex; align-items:center;'>");
-        out.println("<img src='logo.png' style='height:30px; margin-right:15px;' alt='Logo'>");
-        out.println("<span style='letter-spacing:1px; font-weight:bold;'>RESERVATION MANAGEMENT</span>");
+        out.println("<img src='images/logo.png' style='height:30px; margin-right:15px;' alt='Logo'>");        out.println("<span style='letter-spacing:1px; font-weight:bold;'>RESERVATION MANAGEMENT</span>");
         out.println("</div>");
         out.println("<a href='" + homePage + "' style='color:var(--accent); text-decoration:none; font-size:13px;'>DASHBOARD</a>");
         out.println("</div>");
