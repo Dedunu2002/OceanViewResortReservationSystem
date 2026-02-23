@@ -115,9 +115,41 @@
         <url-pattern>/UpdateRatesServlet</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>StaffApiServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.StaffApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffApiServlet</servlet-name>
+        <url-pattern>/api/staff-list</url-pattern>
+    </servlet-mapping>
 
+    <servlet>
+        <servlet-name>DashboardApiServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.DashboardApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DashboardApiServlet</servlet-name>
+        <url-pattern>/api/dashboard-stats</url-pattern>
+    </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ReceptionApiServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.ReceptionApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReceptionApiServlet</servlet-name>
+        <url-pattern>/api/reception-stats</url-pattern>
+    </servlet-mapping>
 
+    <servlet>
+        <servlet-name>GetBillServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.GetBillServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GetBillServlet</servlet-name>
+        <url-pattern>/api/get-bill</url-pattern>
+    </servlet-mapping>
 
 
 

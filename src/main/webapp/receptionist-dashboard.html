@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reception Desk | Ocean View Resort</title>
+    <style>
+        /* --- YOUR LUXURY DESIGN SYSTEM --- */
+        :root {
+            --primary: #0A2540;
+            --secondary: #1E6F9F;
+            --accent: #C9A24D;
+            --bg: #F5F7FA;
+            --text-main: #1C1C1C;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            background: var(--bg);
+            color: var(--text-main);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--primary);
+            color: white;
+            height: 100vh;
+            padding: 30px;
+            box-sizing: border-box;
+            position: fixed;
+        }
+        .sidebar h2 { font-size: 18px; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+        .sidebar p { font-size: 11px; color: var(--accent); margin-bottom: 30px; text-transform: uppercase; }
+        .sidebar a { color: #cbd5e1; display: block; padding: 15px 0; text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .sidebar a:hover { color: var(--accent); }
+
+        .main-content { flex: 1; padding: 50px; margin-left: 280px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .header h1 { font-weight: 300; margin: 0; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .action-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .action-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+            border-top-color: var(--accent);
+        }
+
+        .action-card h3 { margin: 15px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; font-size: 18px; color: var(--primary); }
+        .action-card p { color: #64748b; font-size: 14px; margin: 0; }
+        .action-card .icon-wrapper { font-size: 32px; margin-bottom: 10px; display: block; }
+
+        /* Receptionist Specific: Availability Banner */
+        .availability-card {
+            background: white;
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border-left: 4px solid var(--secondary);
+            margin-top: 40px;
+            display: inline-block;
+            min-width: 300px;
+        }
+        .availability-card h3 { font-size: 12px; text-transform: uppercase; color: var(--secondary); margin: 0; letter-spacing: 1px; }
+        .stat-value { font-size: 32px; font-weight: 600; margin-top: 10px; color: var(--primary); }
+
+        .btn-logout { color: #ef4444 !important; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px !important; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>OCEAN VIEW</h2>
+        <p>FRONT DESK OPERATIONS</p>
+        <a href="index.html">New Guest Registration</a>
+        <a href="view-reservations">Search Bookings</a>
+        <a href="help.html">Support & Guides</a>
+        <a href="logout" class="btn-logout">Sign Out</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Welcome, <strong id="user-display">Staff</strong></h1>
+                <p style="color: var(--secondary); margin-top: 5px;">Front Desk Operations Control</p>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <a href="index.html" class="action-card">
+                <div class="icon-wrapper">塑</div>
+                <h3>New Guest</h3>
+                <p>Registration & Billing</p>
+            </a>
+
+            <a href="view-reservations" class="action-card">
+                <div class="icon-wrapper">套</div>
+                <h3>Reservations</h3>
+                <p>Search & Manage</p>
+            </a>
+
+            <a href="help.html" class="action-card">
+                <div class="icon-wrapper">聴</div>
+                <h3>Support</h3>
+                <p>Staff Quick Guide</p>
+            </a>
+        </div>
+
+        <div class="availability-card">
+            <h3>Real-Time Inventory</h3>
+            <div class="stat-value" id="rooms-val">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch reception stats when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('api/reception-stats')
+                .then(response => {
+                    if (response.status === 401) {
+                        window.location.href = 'login.html'; // Redirect if not logged in
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Update the UI with real data
+                    document.getElementById('rooms-val').innerText = `${data.availableRooms} / ${data.totalRooms} Available`;
+
+                    if(data.username) {
+                        document.getElementById('user-display').innerText = data.username;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching reception data:', error);
+                    document.getElementById('rooms-val').innerText = 'Data Unavailable';
+                });
+        });
+    </script>
+</body>
+</html>

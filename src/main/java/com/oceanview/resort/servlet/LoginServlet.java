@@ -1,40 +1,44 @@
 package com.oceanview.resort.servlet;
 
-import com.oceanview.resort.util.DBUtil;
+import com.oceanview.resort.dao.StaffDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import java.sql.*;
 
+/**
+ * Controller for Login operations.
+ * This represents the Controller/Logic Tier (Tier 2).
+ */
 public class LoginServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    // Instantiate the DAO
+    private StaffDAO staffDAO = new StaffDAO();
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         String user = request.getParameter("username");
         String pass = request.getParameter("password");
         HttpSession session = request.getSession();
 
-        try (Connection conn = DBUtil.getConnection()) {
-            String sql = "SELECT role FROM staff WHERE username=? AND password=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, user);
-            ps.setString(2, pass);
-            ResultSet rs = ps.executeQuery();
+        // Tier 2 calling Tier 3
+        String role = staffDAO.checkLogin(user, pass);
 
-            if (rs.next()) {
-                String role = rs.getString("role");
-                session.setAttribute("user", user);
-                session.setAttribute("role", role);
+        if (role != null) {
+            // Success: Set session attributes
+            session.setAttribute("user", user);
+            session.setAttribute("role", role);
 
-                if ("ADMIN".equals(role)) {
-                    response.sendRedirect("admin-dashboard.jsp");
-                } else {
-                    response.sendRedirect("receptionist-dashboard.jsp");
-                }
+            // Role-based redirection logic
+            if ("ADMIN".equals(role)) {
+                response.sendRedirect("admin-dashboard.html");
             } else {
-                response.sendRedirect("login.html?error=invalid");
+                response.sendRedirect("receptionist-dashboard.html");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendRedirect("login.html?error=db");
+        } else {
+            // Failure: Redirect back to login with error
+            response.sendRedirect("login.html?error=invalid");
         }
     }
 }

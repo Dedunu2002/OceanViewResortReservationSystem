@@ -17,7 +17,7 @@ public class ViewReservationsServlet extends HttpServlet {
 
         String role = (String) session.getAttribute("role");
         String searchQuery = request.getParameter("searchQuery");
-        String homePage = "ADMIN".equals(role) ? "admin-dashboard.jsp" : "receptionist-dashboard.jsp";
+        String homePage = "ADMIN".equals(role) ? "admin-dashboard.html" : "receptionist-dashboard.html";
 
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
@@ -81,7 +81,9 @@ public class ViewReservationsServlet extends HttpServlet {
                 out.println("<td>" + rs.getString("check_out") + "</td>");
                 out.println("<td>Rs. " + String.format("%.2f", rs.getDouble("total_bill")) + "</td>");
 
+
                 out.println("<td>");
+
                 // EDIT Button: Available to everyone
                 out.println("<a href='edit-reservation?id=" + resId + "' class='btn-edit'>EDIT</a>");
 
@@ -89,6 +91,9 @@ public class ViewReservationsServlet extends HttpServlet {
                 if ("ADMIN".equals(role)) {
                     out.println("<a href='delete-reservation?id=" + resId + "' class='btn-cancel' onclick='return confirm(\"Confirm cancellation?\")'>CANCEL</a>");
                 }
+
+                // Print Bill
+                out.println("<a href='view-bill.html?id=" + resId + "' target='_blank' class='btn-print'>PRINT BILL</a>");
                 out.println("</td>");
 
                 out.println("</tr>");
