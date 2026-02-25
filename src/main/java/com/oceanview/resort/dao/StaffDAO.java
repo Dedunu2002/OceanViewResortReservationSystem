@@ -44,6 +44,30 @@ public class StaffDAO {
         return list;
     }
 
+
+
+    // Inside com.oceanview.resort.dao.StaffDAO
+    public StaffMember getStaffByUsername(String username) {
+        String sql = "SELECT id, username, role FROM staff WHERE username = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new StaffMember(
+                            rs.getInt("id"),
+                            rs.getString("username"),
+                            rs.getString("role")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // --- EXISTING LOGIC ---
     public String checkLogin(String username, String password) {
         String sql = "SELECT password, role FROM staff WHERE username = ?";

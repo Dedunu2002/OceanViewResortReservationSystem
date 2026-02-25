@@ -151,7 +151,14 @@
         <url-pattern>/api/get-bill</url-pattern>
     </servlet-mapping>
 
-
+    <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/api/profile</url-pattern>
+    </servlet-mapping>
 
 
 
