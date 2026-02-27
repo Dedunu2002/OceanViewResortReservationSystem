@@ -160,6 +160,24 @@
         <url-pattern>/api/profile</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>AddCategoryServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.AddCategoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddCategoryServlet</servlet-name>
+        <url-pattern>/AddCategoryServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RoomCategoryServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.servlet.RoomCategoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RoomCategoryServlet</servlet-name>
+        <url-pattern>/api/room-categories</url-pattern>
+    </servlet-mapping>
+
 
 
 

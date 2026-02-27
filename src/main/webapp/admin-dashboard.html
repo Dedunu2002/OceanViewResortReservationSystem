@@ -245,6 +245,8 @@
         <a href="help.html" class="nav-link">
             <i class="fa-solid fa-book-open"></i> Operational Guide
         </a>
+        <a href="add-room-category.html" class="nav-link">
+            <i class="fa-solid fa-tags"></i>Add Room Category</a>
 
         <span class="section-label">Account</span>
         <a href="profile.html" class="nav-link">
@@ -310,23 +312,24 @@
                 <a href="room-status" style="display: block; text-align: center; margin-top: 20px; color: var(--primary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">View Room Map →</a>
             </div>
 
-            <div class="table-container">
-                <h3 style="margin: 0 0 20px; font-size: 1rem; color: var(--primary);">Today's Active Reservations</h3>
-                <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+
+            <div class="cute-card" style="margin-top: 30px;">
+                <h3 style="font-size: 0.9rem; margin: 0 0 20px; color: var(--primary);">SYSTEM ROOM CATEGORIES</h3>
+                <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                     <tr style="text-align: left; border-bottom: 2px solid var(--bg);">
-                        <th style="padding: 12px; color: var(--text-muted); font-weight: 500;">Guest</th>
-                        <th style="padding: 12px; color: var(--text-muted); font-weight: 500;">Room</th>
-                        <th style="padding: 12px; color: var(--text-muted); font-weight: 500;">Status</th>
+                        <th style="padding: 12px; font-size: 0.75rem; color: var(--text-muted);">CATEGORY</th>
+                        <th style="padding: 12px; font-size: 0.75rem; color: var(--text-muted);">PRICE / NIGHT</th>
+                        <th style="padding: 12px; font-size: 0.75rem; color: var(--text-muted);">MAX CAPACITY</th>
                     </tr>
                     </thead>
-                    <tbody id="active-list">
-                    <tr>
-                        <td colspan="3" style="padding: 20px; text-align: center; color: var(--text-muted);">Loading active guest list...</td>
-                    </tr>
+                    <tbody id="category-list-body">
                     </tbody>
                 </table>
             </div>
+
+
+
         </div>
     </div>
 </div>
@@ -372,7 +375,27 @@
                     `;
                     listBody.innerHTML += row;
                 });
+
+
             });
+
+            // Fetch and display Room Categories
+fetch('api/room-categories') // Make sure this matches your web.xml or @WebServlet mapping
+    .then(res => res.json())
+    .then(categories => {
+        const tbody = document.getElementById('category-list-body');
+        tbody.innerHTML = '';
+
+        categories.forEach(cat => {
+            tbody.innerHTML += `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 15px; font-weight: 600; color: var(--primary);">${cat.type}</td>
+                    <td style="padding: 15px; color: var(--accent); font-weight: bold;">Rs. ${cat.price.toLocaleString()}</td>
+                    <td style="padding: 15px;">${cat.capacity} Guests</td>
+                </tr>
+            `;
+        });
+    });
     });
 </script>
 

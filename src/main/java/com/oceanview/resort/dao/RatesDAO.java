@@ -29,4 +29,22 @@ public class RatesDAO {
             return false;
         }
     }
+
+    // Add this method to your existing RatesDAO.java
+    public boolean addRoomCategory(String type, double price, int capacity) {
+        String sql = "INSERT INTO room_rates (room_type, price_per_night, max_capacity) VALUES (?, ?, ?)";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, type);
+            ps.setDouble(2, price);
+            ps.setInt(3, capacity);
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

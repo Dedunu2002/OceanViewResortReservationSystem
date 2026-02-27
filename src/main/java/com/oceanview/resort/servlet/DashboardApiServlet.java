@@ -26,9 +26,8 @@ public class DashboardApiServlet extends HttpServlet {
         int availableRooms = 0;
 
 
-
-
         // Business Logic (In a bigger app, move this to a ReportDAO)
+
         try (Connection conn = DBUtil.getConnection()) {
             // 1. Get Total Bookings with an Alias
             Statement st1 = conn.createStatement();
@@ -55,9 +54,8 @@ public class DashboardApiServlet extends HttpServlet {
             if (rs4.next()) todayArrivals = rs4.getInt("arrival_count");
 
 
-
-
             availableRooms = totalRooms - totalBookings;
+
 
 
 
@@ -68,11 +66,10 @@ public class DashboardApiServlet extends HttpServlet {
         }
 
 
-
         // Return JSON
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
-        out.print("{\"totalBookings\":" + totalBookings + ", \"totalRevenue\":" + totalRevenue + ", \"activeBookings\":" + activeBookings + ", \"todayArrivals\":" + todayArrivals + ", \"availableRooms\":" + availableRooms + ", \"totalRooms\":" + totalRooms + "}");
+        out.print("{\"totalBookings\":" + totalBookings + ", \"totalRevenue\":" + totalRevenue + ", \"activeBookings\":" + activeBookings + ", \"todayArrivals\":" + todayArrivals + ", \"availableRooms\":" + availableRooms + ", \"totalRooms\":" + totalRooms +  "}");
 
         out.flush();
     }

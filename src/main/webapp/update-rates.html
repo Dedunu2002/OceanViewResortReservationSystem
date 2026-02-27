@@ -124,14 +124,15 @@
         <div class="form-card">
             <h2>Update Room Settings</h2>
             <form id="rateForm">
-                <div class="form-group">
-                    <label>Room Category</label>
-                    <select name="room_type" required>
-                        <option value="Standard">Standard Garden View</option>
-                        <option value="Deluxe">Deluxe Ocean Wing</option>
-                        <option value="Luxury">Luxury Presidential Suite</option>
-                    </select>
-                </div>
+
+                    <div class="form-group">
+                        <label>Room Category</label>
+                        <select name="room_type" id="room_type_select">
+                            <option value="">Loading categories...</option>
+                        </select>
+
+                    </div>
+
 
                 <div class="form-group">
                     <label>New Price (per night)</label>
@@ -144,7 +145,9 @@
                 </div>
 
                 <button type="submit" class="btn-update">APPLY NEW SETTINGS</button>
+
             </form>
+
         </div>
     </div>
 
@@ -180,6 +183,33 @@
             statusMsg.style.display = 'block';
             setTimeout(() => { statusMsg.style.display = 'none'; }, 5000);
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const roomSelect = document.getElementById('room_type_select');
+
+    // Fetch the dynamic list from our Java Backend
+    fetch('api/get-categories')
+        .then(response => response.json())
+        .then(categories => {
+            // Clear the "Loading..." message
+            roomSelect.innerHTML = "";
+
+            if(categories.length === 0) {
+                roomSelect.innerHTML = '<option value="">No categories available</option>';
+            } else {
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    roomSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading categories:', error);
+            roomSelect.innerHTML = '<option value="">Error loading categories</option>';
+        });
+});
     </script>
 </body>
 </html>
