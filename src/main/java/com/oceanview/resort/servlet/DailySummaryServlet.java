@@ -59,7 +59,7 @@ public class DailySummaryServlet extends HttpServlet {
         out.println("</tbody></table>");
 
         out.println("<div class='no-print' style='margin-top:20px;'>");
-        out.println("<button onclick='window.print()'>Print/Export PDF</button>");
+        out.println("<button onclick='window.print()'>Generate Reports</button>");
         out.println("<br><br><a href='admin-dashboard.html'>&larr; Back to Dashboard</a>");
         out.println("</div></div></body></html>");
     }

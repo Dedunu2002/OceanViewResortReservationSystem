@@ -3,157 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reception Desk | Ocean View Resort</title>
+    <title>Reception Desk | Ocean View</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- YOUR LUXURY DESIGN SYSTEM --- */
         :root {
-            --primary: #0A2540;
-            --secondary: #1E6F9F;
-            --accent: #C9A24D;
+            --primary: #0A2540;     /* Deep Navy */
+            --secondary: #162E47;   /* Soft Navy */
+            --accent: #C9A24D;      /* Luxury Gold */
+            --accent-glow: rgba(201, 162, 77, 0.3);
             --bg: #F5F7FA;
-            --text-main: #1C1C1C;
-        }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            display: flex;
-            background: var(--bg);
-            color: var(--text-main);
+            --white: #ffffff;
+            --text-muted: #a0aec0;
         }
 
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; background: var(--bg); }
+
+        /* --- LUXURY SIDEBAR --- */
         .sidebar {
-            width: 280px;
-            background: var(--primary);
-            color: white;
-            height: 100vh;
-            padding: 30px;
-            box-sizing: border-box;
-            position: fixed;
-        }
-        .sidebar h2 { font-size: 18px; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
-        .sidebar p { font-size: 11px; color: var(--accent); margin-bottom: 30px; text-transform: uppercase; }
-        .sidebar a { color: #cbd5e1; display: block; padding: 15px 0; text-decoration: none; font-size: 14px; transition: 0.3s; }
-        .sidebar a:hover { color: var(--accent); }
-
-        .main-content { flex: 1; padding: 50px; margin-left: 280px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .header h1 { font-weight: 300; margin: 0; }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
+            width: 300px; background: var(--primary); color: white; height: 100vh;
+            position: fixed; display: flex; flex-direction: column; box-shadow: 10px 0 30px rgba(0,0,0,0.1); z-index: 100;
         }
 
-        .action-card {
-            background: white;
-            padding: 40px 30px;
-            border-radius: 8px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--primary);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-top: 4px solid var(--primary);
-            transition: all 0.3s ease;
-            display: block;
+        .logo-container {
+            padding: 40px 30px; display: flex; align-items: center; gap: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo-img { width: 45px; height: 45px; border-radius: 8px; }
+        .logo-text { font-weight: 700; letter-spacing: 1px; font-size: 1.1rem; color: var(--accent); text-transform: uppercase; }
+
+        .role-card-container { padding: 20px 30px; }
+        .role-card {
+            background: var(--secondary); padding: 15px; border-radius: 12px;
+            border: 1px solid rgba(201, 162, 77, 0.2); display: flex; align-items: center; gap: 12px;
+        }
+        .status-pulse {
+            width: 8px; height: 8px; background: #48bb78; border-radius: 50%;
+            box-shadow: 0 0 8px #48bb78; animation: pulse 2s infinite;
         }
 
-        .action-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
-            border-top-color: var(--accent);
+        .nav-scroll { flex-grow: 1; overflow-y: auto; padding: 10px 20px; }
+        .section-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin: 25px 15px 10px; display: block; }
+        .nav-link {
+            display: flex; align-items: center; gap: 15px; padding: 12px 15px;
+            color: rgba(255,255,255,0.7); text-decoration: none; border-radius: 8px; transition: 0.3s; margin-bottom: 5px; font-size: 0.9rem;
         }
+        .nav-link i { width: 20px; text-align: center; color: var(--accent); }
+        .nav-link:hover, .nav-link.active { background: rgba(201, 162, 77, 0.1); color: var(--accent); }
+        .nav-link.active { background: var(--accent); color: var(--primary); }
+        .nav-link.active i { color: var(--primary); }
 
-        .action-card h3 { margin: 15px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; font-size: 18px; color: var(--primary); }
-        .action-card p { color: #64748b; font-size: 14px; margin: 0; }
-        .action-card .icon-wrapper { font-size: 32px; margin-bottom: 10px; display: block; }
+        /* --- MAIN CONTENT --- */
+        .main-content { margin-left: 300px; width: calc(100% - 300px); }
+        header { background: var(--white); padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 15px rgba(0,0,0,0.05); }
 
-        /* Receptionist Specific: Availability Banner */
-        .availability-card {
-            background: white;
-            padding: 30px;
-            border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            border-left: 4px solid var(--secondary);
-            margin-top: 40px;
-            display: inline-block;
-            min-width: 300px;
+        .cute-card {
+            background: white; padding: 20px; border-radius: 16px; border: 1px solid rgba(201, 162, 77, 0.1); transition: 0.3s;
         }
-        .availability-card h3 { font-size: 12px; text-transform: uppercase; color: var(--secondary); margin: 0; letter-spacing: 1px; }
-        .stat-value { font-size: 32px; font-weight: 600; margin-top: 10px; color: var(--primary); }
+        .card-icon { background: var(--bg); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 12px; }
 
-        .btn-logout { color: #ef4444 !important; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px !important; }
+        .progress-bg { background: #edf2f7; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 15px; }
+        .progress-fill { background: var(--accent); height: 100%; width: 0%; transition: 1s; }
+
+        @keyframes pulse { 0% { transform: scale(0.95); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(72, 187, 120, 0); } 100% { transform: scale(0.95); } }
     </style>
 </head>
 <body>
-<div class="sidebar">
-    <h2>OCEAN VIEW</h2>
-    <p>FRONT DESK OPERATIONS</p>
-    <a href="index.html">New Guest Registration</a>
-    <a href="view-reservations">Search Bookings</a>
-    <a href="profile.html">View Profile</a>
-    <a href="help.html">Support & Guides</a>
-    <a href="logout" class="btn-logout">Sign Out</a>
-</div>
 
-<div class="main-content">
-    <div class="header">
-        <div>
-            <h1>Welcome, <strong id="user-display">Staff</strong></h1>
-            <p style="color: var(--secondary); margin-top: 5px;">Front Desk Operations Control</p>
+<div class="sidebar">
+    <div class="logo-container">
+        <img src="images/logo.png" class="logo-img" alt="Logo">
+        <div class="logo-text">Ocean View<br><span style="font-size: 0.7rem; opacity: 0.8;">Resort & Spa</span></div>
+    </div>
+
+    <div class="role-card-container">
+        <div class="role-card">
+            <div class="status-pulse"></div>
+            <div class="role-info">
+                <span style="display: block; font-size: 0.75rem; color: var(--accent); font-weight: 600;">RECEPTION DESK</span>
+            </div>
         </div>
     </div>
 
-    <div class="dashboard-grid">
-        <a href="index.html" class="action-card">
-            <div class="icon-wrapper">塑</div>
-            <h3>New Guest</h3>
-            <p>Registration & Billing</p>
+    <div class="nav-scroll">
+        <a href="receptionist-dashboard.html" class="nav-link active">
+            <i class="fa-solid fa-hotel"></i> Front Desk Overview
         </a>
 
-        <a href="view-reservations" class="action-card">
-            <div class="icon-wrapper">套</div>
-            <h3>Reservations</h3>
-            <p>Search & Manage</p>
+        <span class="section-label">Guest Handling</span>
+        <a href="index.html" class="nav-link">
+            <i class="fa-solid fa-calendar-plus"></i> New Reservation
+        </a>
+        <a href="view-reservations" class="nav-link">
+            <i class="fa-solid fa-list-check"></i> View All Bookings
         </a>
 
-        <a href="help.html" class="action-card">
-            <div class="icon-wrapper">聴</div>
-            <h3>Support</h3>
-            <p>Staff Quick Guide</p>
+        <span class="section-label">Operations</span>
+        <a href="print-bill.html" class="nav-link">
+            <i class="fa-solid fa-receipt"></i> Quick Billing
+        </a>
+        <a href="help.html" class="nav-link">
+            <i class="fa-solid fa-circle-question"></i> Help Guide
+        </a>
+
+        <span class="section-label">Account</span>
+        <a href="profile.html" class="nav-link">
+            <i class="fa-solid fa-user-circle"></i> My Profile
+        </a>
+        <a href="logout" class="nav-link" style="color: #fc8181;">
+            <i class="fa-solid fa-power-off"></i> Logout
         </a>
     </div>
+</div>
 
-    <div class="availability-card">
-        <h3>Real-Time Inventory</h3>
-        <div class="stat-value" id="rooms-val">Loading...</div>
+<div class="main-content">
+    <header>
+        <h2 style="color: var(--primary); margin: 0;">Reception Portal</h2>
+        <div id="current-time" style="color: var(--text-muted); font-size: 0.9rem;"></div>
+    </header>
+
+    <div style="padding: 40px 50px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 30px;">
+            <div class="cute-card">
+                <div class="card-icon"><i class="fa-solid fa-plane-arrival"></i></div>
+                <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin: 0;">Today's Arrivals</p>
+                <h2 id="arrivals-val" style="margin: 5px 0; color: var(--primary);">0</h2>
+            </div>
+            <div class="cute-card">
+                <div class="card-icon"><i class="fa-solid fa-plane-departure"></i></div>
+                <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin: 0;">Today's Departures</p>
+                <h2 id="departures-val" style="margin: 5px 0; color: var(--primary);">0</h2>
+            </div>
+            <div class="cute-card">
+                <div class="card-icon"><i class="fa-solid fa-key"></i></div>
+                <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin: 0;">Currently In-House</p>
+                <h2 id="active-val" style="margin: 5px 0; color: var(--primary);">0</h2>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
+            <div class="cute-card" style="background: var(--primary); color: white; border: none;">
+                <h3 style="font-size: 0.9rem; margin: 0 0 20px; color: var(--accent);">ROOM AVAILABILITY</h3>
+                <div style="text-align: center; padding: 10px 0;">
+                    <h1 id="rooms-available-val" style="font-size: 3.5rem; margin: 0;">0</h1>
+                    <p style="opacity: 0.7; font-size: 0.8rem;">Vacant Rooms Remaining</p>
+                </div>
+                <div class="progress-bg" style="background: rgba(255,255,255,0.1);">
+                    <div id="availability-bar" class="progress-fill" style="background: var(--accent);"></div>
+                </div>
+            </div>
+
+            <div class="cute-card" style="min-height: 300px;">
+                <h3 style="font-size: 0.9rem; margin: 0 0 20px; color: var(--primary);">CURRENTLY CHECKED-IN</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                    <tr style="text-align: left; border-bottom: 1px solid var(--bg);">
+                        <th style="padding: 10px; font-size: 0.7rem; color: var(--text-muted);">GUEST</th>
+                        <th style="padding: 10px; font-size: 0.7rem; color: var(--text-muted);">ROOM</th>
+                        <th style="padding: 10px; font-size: 0.7rem; color: var(--text-muted);">DEPARTURE</th>
+                    </tr>
+                    </thead>
+                    <tbody id="active-list" style="font-size: 0.85rem;">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    // Fetch reception stats when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        fetch('api/reception-stats')
-            .then(response => {
-                if (response.status === 401) {
-                    window.location.href = 'login.html'; // Redirect if not logged in
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Update the UI with real data
-                document.getElementById('rooms-val').innerText = `${data.availableRooms} / ${data.totalRooms} Available`;
+    function updateTime() {
+        document.getElementById('current-time').innerText = new Date().toLocaleString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
 
-                if(data.username) {
-                    document.getElementById('user-display').innerText = data.username;
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching reception data:', error);
-                document.getElementById('rooms-val').innerText = 'Data Unavailable';
+    document.addEventListener('DOMContentLoaded', () => {
+        // We use the same API as Admin, but the UI is focused on front-desk tasks
+        fetch('api/reception-stats')
+            .then(res => res.status === 401 ? window.location.href = 'login.html' : res.json())
+            .then(data => {
+                document.getElementById('arrivals-val').innerText = data.todayArrivals || 0;
+                document.getElementById('active-val').innerText = data.activeBookings || 0;
+                // Departures could be added to your Java Servlet too
+                document.getElementById('departures-val').innerText = data.todayDepartures || 0;
+
+                document.getElementById('rooms-available-val').innerText = data.availableRooms;
+                const percent = (data.availableRooms / data.totalRooms) * 100;
+                setTimeout(() => {
+                    document.getElementById('availability-bar').style.width = percent + '%';
+                }, 500);
+
+                const list = document.getElementById('active-list');
+                list.innerHTML = '';
+                data.recentReservations.forEach(res => {
+                    list.innerHTML += `
+                        <tr style="border-bottom: 1px solid #f7fafc;">
+                            <td style="padding: 12px; font-weight: 600;">${res.guestName}</td>
+                            <td style="padding: 12px;">Room ${res.roomNumber}</td>
+                            <td style="padding: 12px; color: #718096;">${res.checkoutDate}</td>
+                        </tr>
+                    `;
+                });
             });
     });
 </script>
+
 </body>
 </html>
