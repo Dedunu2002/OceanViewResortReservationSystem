@@ -61,4 +61,54 @@ public class RoomDAO {
         }
         return report;
     }
+
+    public boolean addPhysicalRoom(String roomNumber, String roomType) {
+        // We set status to 'Available' by default for new rooms
+        String sql = "INSERT INTO rooms (room_number, room_type, status) VALUES (?, ?, 'Available')";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, roomNumber);
+            ps.setString(2, roomType);
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String assignAndOccupyRoom(String roomType) {
+        String roomNumber = null;
+        // 1. Find the first available room of this type
+        String findSql = "SELECT room_number FROM rooms WHERE room_type = ? AND status = 'Available' LIMIT 1";
+        // 2. Mark it as occupied
+        String updateSql = "UPDATE rooms SET status = 'Occupied' WHERE room_number = ?";
+
+        try (Connection conn = DBUtil.getConnection()) {
+            conn.setAutoCommit(false); // Start transaction
+
+            try (PreparedStatement psFind = conn.prepareStatement(findSql)) {
+                psFind.setString(1, roomType);
+                ResultSet rs = psFind.executeQuery();
+
+                if (rs.next()) {
+                    roomNumber = rs.getString("room_number");
+
+                    try (PreparedStatement psUpdate = conn.prepareStatement(updateSql)) {
+                        psUpdate.setString(1, roomNumber);
+                        psUpdate.executeUpdate();
+                    }
+                }
+                conn.commit(); // Save changes
+            } catch (SQLException e) {
+                conn.rollback();
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roomNumber; // Returns null if no rooms are available
+    }
 }

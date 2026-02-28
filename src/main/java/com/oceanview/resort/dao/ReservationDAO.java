@@ -40,8 +40,8 @@ public class ReservationDAO {
      * Tier 3 logic to save a new reservation.
      */
     public boolean createReservation(String name, String contact, String email, String address,
-                                     String type, String checkIn, String checkOut, double total) {
-        String sql = "INSERT INTO reservations (guest_name, contact_number, email, address, room_type, check_in, check_out, total_bill) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                                     String type, String roomNumber, String checkIn, String checkOut, double total) {
+        String sql = "INSERT INTO reservations (guest_name, contact_number, email, address, room_type, room_number, check_in, check_out, total_bill) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -50,9 +50,10 @@ public class ReservationDAO {
             ps.setString(3, email);
             ps.setString(4, address);
             ps.setString(5, type);
-            ps.setString(6, checkIn);
-            ps.setString(7, checkOut);
-            ps.setDouble(8, total);
+            ps.setString(6, roomNumber);
+            ps.setString(7, checkIn);
+            ps.setString(8, checkOut);
+            ps.setDouble(9, total);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,13 +76,13 @@ public class ReservationDAO {
         }
     }
 
-    public boolean updateReservation(int id, String contact, String email, String address,
-                                     String type, String checkOut) {
+    // Inside com.oceanview.resort.dao.ReservationDAO.java
 
+    public boolean updateReservation(int id, String contact, String email, String address, String type, String roomNumber, String checkOut) {
         String fetchSql = "SELECT check_in FROM reservations WHERE reservation_number = ?";
+        // ADDED room_number=? to the SQL query
         String updateSql = "UPDATE reservations SET contact_number=?, email=?, address=?, " +
-                "room_type=?, check_out=?, total_bill=? WHERE reservation_number=?";
-
+                "room_type=?, room_number=?, check_out=?, total_bill=? WHERE reservation_number=?";
         try (Connection conn = DBUtil.getConnection()) {
             // 1. Fetch original check-in to recalculate bill
             String checkIn = "";
@@ -94,21 +95,65 @@ public class ReservationDAO {
                 }
             }
 
-            // 2. Recalculate bill using our existing DAO method
+            // 2. Recalculate bill
             double newTotal = calculateTotalBill(type, checkIn, checkOut);
 
-            // 3. Perform the update
+            // 3. Perform the update with the new room number
             try (PreparedStatement psUpdate = conn.prepareStatement(updateSql)) {
                 psUpdate.setString(1, contact);
                 psUpdate.setString(2, email);
                 psUpdate.setString(3, address);
                 psUpdate.setString(4, type);
-                psUpdate.setString(5, checkOut);
-                psUpdate.setDouble(6, newTotal);
-                psUpdate.setInt(7, id);
+                psUpdate.setString(5, roomNumber); // NEW
+                psUpdate.setString(6, checkOut);
+                psUpdate.setDouble(7, newTotal);
+                psUpdate.setInt(8, id);
 
                 return psUpdate.executeUpdate() > 0;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean processCheckOut(int reservationId) {
+        String getRoomSql = "SELECT room_number FROM reservations WHERE reservation_number = ?";
+        String updateRoomSql = "UPDATE rooms SET status = 'Available' WHERE room_number = ?";
+        String deleteResSql = "DELETE FROM reservations WHERE reservation_number = ?";
+
+        try (Connection conn = DBUtil.getConnection()) {
+            conn.setAutoCommit(false); // Start Transaction
+
+            String roomNumber = null;
+            // 1. Get the room number associated with this booking
+            try (PreparedStatement ps1 = conn.prepareStatement(getRoomSql)) {
+                ps1.setInt(1, reservationId);
+                ResultSet rs = ps1.executeQuery();
+                if (rs.next()) {
+                    roomNumber = rs.getString("room_number");
+                }
+            }
+
+            if (roomNumber != null) {
+                // 2. Set the room back to Available
+                try (PreparedStatement ps2 = conn.prepareStatement(updateRoomSql)) {
+                    ps2.setString(1, roomNumber);
+                    ps2.executeUpdate();
+                }
+
+                // 3. Remove the reservation (or mark as 'Completed')
+                try (PreparedStatement ps3 = conn.prepareStatement(deleteResSql)) {
+                    ps3.setInt(1, reservationId);
+                    ps3.executeUpdate();
+                }
+
+                conn.commit(); // Success: Save all changes
+                return true;
+            }
+
+            conn.rollback();
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

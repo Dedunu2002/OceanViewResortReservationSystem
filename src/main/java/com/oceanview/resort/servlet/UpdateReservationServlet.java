@@ -14,11 +14,11 @@ public class UpdateReservationServlet extends HttpServlet {
         String email = request.getParameter("email");
         String address = request.getParameter("address");
         String type = request.getParameter("room_type");
+        String roomNumber = request.getParameter("room_number");
         String checkOut = request.getParameter("check_out");
 
         // The DAO now handles the fetch, calculation, and update in one step
-        boolean success = resDAO.updateReservation(id, contact, email, address, type, checkOut);
-
+        boolean success = resDAO.updateReservation(id, contact, email, address, type, roomNumber, checkOut);
         if (success) {
             response.sendRedirect("view-reservations?update=success");
         } else {

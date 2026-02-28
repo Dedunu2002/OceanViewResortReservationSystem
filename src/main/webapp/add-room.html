@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Physical Rooms | Ocean View</title>
+    <style>
+        :root { --primary: #0A2540; --accent: #C9A24D; --bg: #F5F7FA; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; }
+        .sidebar { width: 280px; background: var(--primary); color: white; height: 100vh; padding: 30px; position: fixed; }
+        .main-content { margin-left: 280px; flex: 1; padding: 50px; display: flex; justify-content: center; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 450px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0 20px; border: 1px solid #ddd; border-radius: 6px; }
+        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn:hover { background: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h2>OCEAN VIEW</h2>
+    <a href="admin-dashboard.html" style="color:white; text-decoration:none;">← Back to Dashboard</a>
+</div>
+
+<div class="main-content">
+    <div class="card">
+        <h2 style="color: var(--primary);">Add New Room</h2>
+        <form action="AddRoomServlet" method="POST">
+            <label>Room Number (e.g., D_101)</label>
+            <input type="text" name="room_number" placeholder="Enter unique ID" required>
+
+            <label>Assign to Category</label>
+            <select name="room_type" id="category_dropdown" required>
+                <option value="">Loading categories...</option>
+            </select>
+
+            <button type="submit" class="btn">REGISTER ROOM</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Use our dynamic API to fill the dropdown
+    fetch('api/get-categories')
+        .then(res => res.json())
+        .then(data => {
+            const dropdown = document.getElementById('category_dropdown');
+            dropdown.innerHTML = '<option value="">Select Category</option>';
+            data.forEach(cat => {
+                dropdown.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+        });
+
+    // Show alerts based on URL status
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('status') === 'success') alert('Room added successfully!');
+    if(params.get('status') === 'error') alert('Error: Room number might already exist.');
+</script>
+</body>
+</html>

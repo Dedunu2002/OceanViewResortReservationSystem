@@ -1,6 +1,7 @@
 package com.oceanview.resort.servlet;
 
 import com.oceanview.resort.dao.ReservationDAO;
+import com.oceanview.resort.dao.RoomDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.time.temporal.ChronoUnit;
 public class BookingServlet extends HttpServlet {
 
     private ReservationDAO resDAO = new ReservationDAO();
+    private RoomDAO roomDAO = new RoomDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -27,8 +29,15 @@ public class BookingServlet extends HttpServlet {
         String email = request.getParameter("email");
         String addr = request.getParameter("address");
         String type = request.getParameter("room_type");
+
         String checkIn = request.getParameter("check_in");
         String checkOut = request.getParameter("check_out");
+
+        String assignedRoomNumber = roomDAO.assignAndOccupyRoom(type);
+        if (assignedRoomNumber == null) {
+            response.sendRedirect("index.html?error=no_available_rooms");
+            return;
+        }
 
         // 2. Data Processing (Tier 3 Logic)
         // We use the DAO to calculate the bill based on rates in the DB
@@ -39,7 +48,7 @@ public class BookingServlet extends HttpServlet {
         if (nights <= 0) nights = 1;
 
         // 3. Database Operation
-        boolean success = resDAO.createReservation(name, contact, email, addr, type, checkIn, checkOut, total);
+        boolean success = resDAO.createReservation(name, contact, email, addr, type, assignedRoomNumber, checkIn, checkOut, total);
 
         // 4. Response Rendering (Tier 2 UI Logic)
         if (success) {
@@ -60,6 +69,7 @@ public class BookingServlet extends HttpServlet {
             out.println("<div class='card'>");
             out.println("<h1>Reservation Confirmed</h1>");
             out.println("<p>Guest Name: <strong>" + name + "</strong></p>");
+            out.println("<p>Room Assigned: <strong>" + assignedRoomNumber + "</strong> (" + type + ")</p>");
             out.println("<p>Room Category: " + type + "</p>");
             out.println("<p>Stay Duration: " + nights + " Night(s)</p>");
 
