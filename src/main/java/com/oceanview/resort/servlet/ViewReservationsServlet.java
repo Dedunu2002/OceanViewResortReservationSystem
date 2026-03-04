@@ -121,7 +121,7 @@ public class ViewReservationsServlet extends HttpServlet {
 
                 out.println("<tr>");
                 out.println("<td style='color:var(--text-muted); font-family:monospace;'>#OR-" + resId + "</td>");
-                out.println("<td><strong>" + rs.getString("guest_name") + "</strong><br><small>" + rs.getString("email") + "</small></td>");
+                out.println("<td><strong>" + rs.getString("guest_name") + "</strong><br><small>" + rs.getString("email") + "</strong><br><small>" + rs.getString("contact_number") + "</small></td>");
                 out.println("<td>" + rs.getString("check_in") + " <i class='fa-solid fa-arrow-right' style='font-size:10px; color:var(--accent)'></i> " + checkOutStr + "</td>");
                 out.println("<td><span style='color:var(--primary); font-weight:600;'>" + rs.getString("room_type") + "</span><br><small>Room: " + rs.getString("room_number") + "</small></td>");
                 out.println("<td style='font-weight:bold; color:var(--primary);'>Rs. " + String.format("%.2f", rs.getDouble("total_bill")) + "</td>");
