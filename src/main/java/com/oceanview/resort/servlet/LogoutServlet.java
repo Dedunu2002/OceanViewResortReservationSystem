@@ -1,4 +1,4 @@
-package com.oceanview.resort;
+package com.oceanview.resort.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;

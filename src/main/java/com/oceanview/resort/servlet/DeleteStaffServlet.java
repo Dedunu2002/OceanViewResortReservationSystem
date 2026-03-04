@@ -1,14 +1,14 @@
-package com.oceanview.resort;
+package com.oceanview.resort.servlet;
 
+import com.oceanview.resort.dao.StaffDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 
 public class DeleteStaffServlet extends HttpServlet {
+    private StaffDAO staffDAO = new StaffDAO();
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. Security Guard: Only Admins can delete staff
         HttpSession session = request.getSession(false);
         if (session == null || !"ADMIN".equals(session.getAttribute("role"))) {
             response.sendRedirect("login.html");
@@ -16,33 +16,21 @@ public class DeleteStaffServlet extends HttpServlet {
         }
 
         String staffId = request.getParameter("id");
+        String currentAdmin = (String) session.getAttribute("user");
 
         if (staffId != null) {
-            try (Connection conn = DBUtil.getConnection()) {
-                // 2. Prevent the Admin from deleting themselves (Safety Check)
-                // We assume the admin's username is stored in the session
-                String currentAdmin = (String) session.getAttribute("user");
+            int result = staffDAO.deleteStaff(Integer.parseInt(staffId), currentAdmin);
 
-                String sql = "DELETE FROM staff WHERE id = ? AND username != ?";
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setInt(1, Integer.parseInt(staffId));
-                ps.setString(2, currentAdmin);
-
-                int rowsDeleted = ps.executeUpdate();
-
-                if (rowsDeleted > 0) {
-                    response.sendRedirect("manage-staff.jsp?deleted=success");
-                } else {
-                    // This happens if they tried to delete themselves
-                    response.sendRedirect("manage-staff.jsp?error=protected");
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                response.sendRedirect("manage-staff.jsp?error=db");
+            if (result > 0) {
+                response.sendRedirect("manage-staff.html?deleted=success");
+            } else if (result == 0) {
+                // Tried to delete themselves (the username matched the protected criteria)
+                response.sendRedirect("manage-staff.html?error=protected");
+            } else {
+                response.sendRedirect("manage-staff.html?error=db");
             }
         } else {
-            response.sendRedirect("manage-staff.jsp");
+            response.sendRedirect("manage-staff.html");
         }
     }
 }

@@ -1,25 +1,36 @@
-package com.oceanview.resort;
+package com.oceanview.resort.servlet;
 
+import com.oceanview.resort.dao.ReservationDAO;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import java.sql.*;
 
-
+/**
+ * Controller for deleting reservations.
+ * separation of logic: The Servlet handles the request,
+ * the DAO handles the database.
+ */
 public class DeleteReservationServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    // Instantiate the DAO
+    private ReservationDAO resDAO = new ReservationDAO();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         String id = request.getParameter("id");
 
-        try (Connection conn = DBUtil.getConnection()) {
-            String sql = "DELETE FROM reservations WHERE reservation_number = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, Integer.parseInt(id));
-            ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (id != null) {
+            try {
+                // Tier 2 calling Tier 3
+                resDAO.deleteReservation(Integer.parseInt(id));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
-        // Redirect back to the view page after deleting
+
+        // Redirect back to the view list
         response.sendRedirect("view-reservations");
     }
 }

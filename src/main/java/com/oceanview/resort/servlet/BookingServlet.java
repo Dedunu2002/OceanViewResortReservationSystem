@@ -1,115 +1,112 @@
-package com.oceanview.resort;
-
+package com.oceanview.resort.servlet;
+import com.oceanview.resort.util.SMSUtil;
+import com.oceanview.resort.dao.ReservationDAO;
+import com.oceanview.resort.dao.RoomDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Controller for guest bookings.
+ * Tier 2: Handles the request and renders the UI.
+ * Tier 3: Calls ReservationDAO for price calculations and DB insertion.
+ */
 public class BookingServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. Retrieve parameters from the form
+
+    private ReservationDAO resDAO = new ReservationDAO();
+    private RoomDAO roomDAO = new RoomDAO();
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // 1. Retrieve parameters from the web form
         String name = request.getParameter("guest_name");
         String contact = request.getParameter("contact_number");
         String email = request.getParameter("email");
         String addr = request.getParameter("address");
         String type = request.getParameter("room_type");
-        String check_in_str = request.getParameter("check_in");
-        String check_out_str = request.getParameter("check_out");
 
-        // 2. Safety Guard: Prevent null or empty date strings
-        if (check_in_str == null || check_out_str == null || check_in_str.isEmpty() || check_out_str.isEmpty()) {
-            response.sendRedirect("index.html?error=invalid_dates");
+        String checkIn = request.getParameter("check_in");
+        String checkOut = request.getParameter("check_out");
+
+        String assignedRoomNumber = roomDAO.assignAndOccupyRoom(type);
+        if (assignedRoomNumber == null) {
+            response.sendRedirect("index.html?error=no_available_rooms");
             return;
         }
 
-        try {
-            // 3. Parse dates and calculate the stay duration
-            LocalDate start = LocalDate.parse(check_in_str);
-            LocalDate end = LocalDate.parse(check_out_str);
-            long nights = ChronoUnit.DAYS.between(start, end);
-            if (nights <= 0) nights = 1;
+        // 2. Data Processing (Tier 3 Logic)
+        // We use the DAO to calculate the bill based on rates in the DB
+        double total = resDAO.calculateTotalBill(type, checkIn, checkOut);
 
-            try (Connection conn = DBUtil.getConnection()) {
+        // We calculate nights here just for the display/UI part
+        long nights = ChronoUnit.DAYS.between(LocalDate.parse(checkIn), LocalDate.parse(checkOut));
+        if (nights <= 0) nights = 1;
 
-                // --- 4. FETCH DYNAMIC PRICE AND CAPACITY FROM DATABASE ---
-                double price = 0;
-                int maxCapacity = 0;
+        // 3. Database Operation
+        boolean success = resDAO.createReservation(name, contact, email, addr, type, assignedRoomNumber, checkIn, checkOut, total);
 
-                String rateSql = "SELECT price_per_night, max_capacity FROM room_rates WHERE room_type = ?";
-                PreparedStatement ratePs = conn.prepareStatement(rateSql);
-                ratePs.setString(1, type);
-                ResultSet rateRs = ratePs.executeQuery();
+        // 4. Response Rendering (Tier 2 UI Logic)
+        if (success) {
 
-                if (rateRs.next()) {
-                    price = rateRs.getDouble("price_per_night");
-                    maxCapacity = rateRs.getInt("max_capacity");
-                } else {
-                    // Fallback if the room type isn't found in the new table
-                    response.sendRedirect("index.html?error=invalid_room_type");
-                    return;
-                }
+            boolean smsTriggered = SMSUtil.sendBookingSMS(name, contact, checkIn, checkOut, total);
 
-                // --- 5. ROOM AVAILABILITY CHECK LOGIC ---
-                // Uses the maxCapacity fetched from the database
-                String checkSql = "SELECT COUNT(*) FROM reservations " +
-                        "WHERE room_type = ? " +
-                        "AND (check_in < ? AND check_out > ?)";
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
 
-                PreparedStatement checkPs = conn.prepareStatement(checkSql);
-                checkPs.setString(1, type);
-                checkPs.setString(2, check_out_str);
-                checkPs.setString(3, check_in_str);
+            out.println("<html><head><title>Booking Confirmed | Ocean View</title>");
+            out.println("<style>");
+            out.println(":root { --primary: #0A2540; --accent: #C9A24D; --bg: #F5F7FA; }");
+            out.println("body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }");
+            out.println(".card { background: white; padding: 50px; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border-top: 5px solid var(--primary); max-width: 500px; width: 90%; }");
+            out.println("h1 { color: var(--primary); letter-spacing: 2px; text-transform: uppercase; font-size: 22px; margin-bottom: 20px; }");
+            out.println(".amount { font-size: 32px; color: var(--accent); font-weight: bold; margin: 25px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0; }");
+            out.println("p { color: #555; line-height: 1.6; margin: 5px 0; }");
+            out.println(".btn { display: inline-block; margin-top: 25px; padding: 15px 30px; background: var(--primary); color: white; text-decoration: none; border-radius: 3px; font-size: 13px; letter-spacing: 1px; font-weight: bold; text-transform: uppercase; }");
 
-                ResultSet rs = checkPs.executeQuery();
-                if (rs.next()) {
-                    int occupiedRooms = rs.getInt(1);
-                    if (occupiedRooms >= maxCapacity) {
-                        // Redirect with both error and type for the JavaScript alert
-                        response.sendRedirect("index.html?error=no_availability&type=" + type);
-                        return;
-                    }
-                }
+            // Notification Toast Styling
+            out.println(".toast { position: fixed; top: 20px; right: 20px; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-left: 5px solid var(--success); display: flex; align-items: center; gap: 15px; transform: translateX(120%); transition: 0.5s ease-in-out; }");
+            out.println(".toast.show { transform: translateX(0); }");
+            out.println(".toast i { color: var(--success); font-size: 20px; }");
 
-                // --- 6. PROCEED WITH BOOKING ---
-                double total = nights * price;
-                String sql = "INSERT INTO reservations (guest_name, contact_number, email, address, room_type, check_in, check_out, total_bill) VALUES (?,?,?,?,?,?,?,?)";
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setString(1, name);
-                ps.setString(2, contact);
-                ps.setString(3, email);
-                ps.setString(4, addr);
-                ps.setString(5, type);
-                ps.setString(6, check_in_str);
-                ps.setString(7, check_out_str);
-                ps.setDouble(8, total);
-                ps.executeUpdate();
+            out.println("</style></head><body>");
 
-                // 7. Generate Success Response
-                response.setContentType("text/html");
-                PrintWriter out = response.getWriter();
-                out.println("<html><head><title>Reservation Confirmed | Ocean View</title>");
-                out.println("<style>");
-                out.println(":root { --primary: #0A2540; --accent: #C9A24D; --bg: #F5F7FA; }");
-                out.println("body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }");
-                out.println(".card { background: white; padding: 50px; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border-top: 5px solid var(--primary); max-width: 500px; }");
-                out.println("h1 { color: var(--primary); letter-spacing: 2px; text-transform: uppercase; font-size: 22px; }");
-                out.println(".amount { font-size: 28px; color: var(--accent); font-weight: bold; margin: 20px 0; }");
-                out.println(".btn { display: inline-block; padding: 15px 30px; background: var(--primary); color: white; text-decoration: none; border-radius: 3px; font-size: 13px; letter-spacing: 1px; font-weight: bold; text-transform: uppercase; }");
-                out.println("</style></head><body>");
-                out.println("<div class='card'>");
-                out.println("<h1>Reservation Confirmed</h1>");
-                out.println("<p>Guest: <strong>" + name + "</strong></p>");
-                out.println("<p>Stay Duration: " + nights + " Night(s)</p>");
-                out.println("<div class='amount'>Rs. " + String.format("%.2f", total) + "</div>");
-                out.println("<a href='receptionist-dashboard.jsp' class='btn'>Back to Dashboard</a>");
-                out.println("</div></body></html>");
+            // THE POPUP NOTIFICATION
+            if (smsTriggered) {
+                out.println("<div id='smsToast' class='toast'>");
+                out.println("<i class='fa-solid fa-circle-check'></i>");
+                out.println("<div><strong style='display:block; font-size:12px;'>SYSTEM ALERT</strong>");
+                out.println("<span style='font-size:13px; color:#555;'>SMS Notification successfully sent to " + contact + "</span></div>");
+                out.println("</div>");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect("index.html?error=system");
+
+            out.println("<div class='card'>");
+            out.println("<h1>Reservation Confirmed</h1>");
+            out.println("<p>Guest Name: <strong>" + name + "</strong></p>");
+            out.println("<p>Room Assigned: <strong>" + assignedRoomNumber + "</strong> (" + type + ")</p>");
+            out.println("<p>Room Category: " + type + "</p>");
+            out.println("<p>Stay Duration: " + nights + " Night(s)</p>");
+
+            out.println("<div class='amount'>TOTAL: Rs. " + String.format("%.2f", total) + "</div>");
+
+            out.println("<p style='font-size: 12px;'>A confirmation email has been sent to " + email + "</p>");
+            out.println("<a href='index.html' class='btn'>Make Another Booking</a>");
+            out.println("</div>");
+
+            // Script to show the toast
+            out.println("<script>");
+            out.println("setTimeout(() => { document.getElementById('smsToast').classList.add('show'); }, 500);");
+            out.println("setTimeout(() => { document.getElementById('smsToast').classList.remove('show'); }, 5000);");
+            out.println("</script>");
+
+            out.println("</body></html>");
+        } else {
+            // If the database fails, send them back with an error
+            response.sendRedirect("index.html?error=db_failure");
         }
     }
 }
