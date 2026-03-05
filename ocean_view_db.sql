@@ -1,4 +1,5 @@
-
+USE ocean_view_db;
+-- Then your CREATE TABLE statements...
 CREATE TABLE IF NOT EXISTS `reservations` (
   `reservation_number` int NOT NULL AUTO_INCREMENT,
   `guest_name` varchar(100) DEFAULT NULL,
