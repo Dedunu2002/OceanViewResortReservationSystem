@@ -31,7 +31,7 @@ jobs:
 
       # NEW STEP: This creates the tables in the cloud database
       - name: Initialize Database Schema
-        run: mysql -h 127.0.0.1 -u root -proot ocean_view_db < database.sql
+        run: mysql -h 127.0.0.1 -u root -proot ocean_view_db < ocean_view_db.sql
 
       - name: Build and Test with Maven
         run: mvn -B package --file pom.xml
