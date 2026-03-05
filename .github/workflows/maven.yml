@@ -3,12 +3,21 @@ name: Java CI with Maven
 on:
   push:
     branches: [ "main", "feature-*" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    # This part starts a temporary MySQL database in the cloud
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: oceanview_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: actions/checkout@v3
@@ -22,3 +31,7 @@ jobs:
 
       - name: Build and Test with Maven
         run: mvn -B package --file pom.xml
+        env:
+          DB_URL: jdbc:mysql://localhost:3306/oceanview_db
+          DB_USER: root
+          DB_PASSWORD: root
