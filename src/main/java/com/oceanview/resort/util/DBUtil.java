@@ -7,10 +7,13 @@ import java.sql.SQLException;
 public class DBUtil {
     // Database URL: localhost means your computer, 3306 is the MySQL port,
     // and ocean_view_db is the name of the database we created in WAMP
-    private static final String URL = "jdbc:mysql://localhost:3306/ocean_view_db";
-    private static final String USER = "root";
-    private static final String PASSWORD = ""; // WAMP default is empty
 
+
+
+    // It looks for the GitHub 'root' password first; if empty, it uses your WAMP ""
+    private static final String URL = System.getProperty("URL", "jdbc:mysql://localhost:3306/ocean_view_db");
+    private static final String USER = System.getProperty("USER", "root");
+    private static final String PASSWORD = System.getProperty("PASSWORD", "");
     public static Connection getConnection() {
         Connection connection = null;
         try {
