@@ -42,6 +42,6 @@ jobs:
       - name: Build and Test with Maven
         run: mvn -B package --file pom.xml
         env:
-          -DURL=jdbc:mysql://127.0.0.1:3306/ocean_view_db \
-          -DUSER=root \
-          -DPASSWORD=root
+          -URL=jdbc:mysql://127.0.0.1:3306/ocean_view_db \
+          -USER=root \
+          -PASSWORD=root
