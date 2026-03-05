@@ -40,8 +40,4 @@ jobs:
         run: mysql -h 127.0.0.1 -P 3306 -u root -proot ocean_view_db < ocean_view_db.sql
 
       - name: Build and Test with Maven
-        run: mvn -B package --file pom.xml
-        env:
-          -DURL="jdbc:mysql://127.0.0.1:3306/ocean_view_db" 
-          -DUSER="root" 
-          -DPASSWORD="root"
+        run: mvn -B package --file pom.xml -DURL="jdbc:mysql://127.0.0.1:3306/ocean_view_db" -DUSER="root" -DPASSWORD="root"
