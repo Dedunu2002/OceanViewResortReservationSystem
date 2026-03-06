@@ -28,7 +28,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # This ensures the MySQL service is actually ready before we touch it
       - name: Wait for MySQL to be ready
         run: |
           until mysqladmin ping -h "127.0.0.1" -P 3306 --silent; do
@@ -40,8 +39,4 @@ jobs:
         run: mysql -h 127.0.0.1 -P 3306 -u root -proot ocean_view_db < ocean_view_db.sql
 
       - name: Build and Test with Maven
-        run: mvn -B package --file pom.xml
-        env:
-          -URL=jdbc:mysql://127.0.0.1:3306/ocean_view_db \
-          -USER=root \
-          -PASSWORD=root
+        run: mvn -B package -DURL="jdbc:mysql://127.0.0.1:3306/ocean_view_db" -DUSER="root" -DPASSWORD="root"

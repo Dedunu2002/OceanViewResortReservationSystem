@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Physical Rooms | Ocean View</title>
+    <title>View Rooms | Ocean View</title>
     <style>
-        :root { --primary: #0A2540; --accent: #C9A24D; --bg: #F5F7FA; }
+        :root { --primary: #0A2540; --accent: #C9A24D; --bg: #F5F7FA; --danger: #fc8181; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; }
+
         /* --- LUXURY SIDEBAR --- */
         .sidebar {
             width: 300px;
@@ -131,14 +132,18 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(72, 187, 120, 0); }
         }
 
-        .main-content { margin-left: 280px; flex: 1; padding: 50px; display: flex; justify-content: center; }
-        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 450px; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0 20px; border: 1px solid #ddd; border-radius: 6px; }
-        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn:hover { background: var(--accent); }
+        .main-content { margin-left: 300px; padding: 50px; width: 100%; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid var(--bg); color: var(--primary); }
+        td { padding: 12px; border-bottom: 1px solid var(--bg); }
+
+        .btn-delete { color: var(--danger); cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
+
 <div class="sidebar">
     <div class="logo-container">
 
@@ -185,7 +190,9 @@
             <i class="fa-solid fa-tags"></i>Add Room Category</a>
 
         <a href="add-room.html" class="nav-link">
-            <i class="fa-solid fa-tags"></i>Room Managment</a>
+            <i class="fa-solid fa-tags"></i>Add Room</a>
+        <a href="view-rooms.html" class="nav-link">
+            <i class="fa-solid fa-tags"></i>View Room List</a>
 
         <span class="section-label">Account</span>
         <a href="profile.html" class="nav-link">
@@ -200,37 +207,57 @@
 
 <div class="main-content">
     <div class="card">
-        <h2 style="color: var(--primary);">Add New Room</h2>
-        <form action="AddRoomServlet" method="POST">
-            <label>Room Number (e.g., D_101)</label>
-            <input type="text" name="room_number" placeholder="Enter unique ID" required>
-
-            <label>Assign to Category</label>
-            <select name="room_type" id="category_dropdown" required>
-                <option value="">Loading categories...</option>
-            </select>
-
-            <button type="submit" class="btn">REGISTER ROOM</button>
-        </form>
+        <h2 style="color: var(--primary);">Physical Room Inventory</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Room Number</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="roomsTableBody">
+            </tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    // Use our dynamic API to fill the dropdown
-    fetch('api/get-categories')
+    // 1. Fetch data from our new API
+    fetch('api/get-rooms')
         .then(res => res.json())
         .then(data => {
-            const dropdown = document.getElementById('category_dropdown');
-            dropdown.innerHTML = '<option value="">Select Category</option>';
-            data.forEach(cat => {
-                dropdown.innerHTML += `<option value="${cat}">${cat}</option>`;
+            const tableBody = document.getElementById('roomsTableBody');
+            tableBody.innerHTML = ''; // Clear loading text
+
+            data.forEach(room => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><b>${room.roomNumber}</b></td>
+                        <td>${room.roomType}</td>
+                        <td>${room.status}</td>
+                        <td>
+                            <span class="btn-delete" onclick="deleteRoom('${room.roomNumber}')">
+                                Delete
+                            </span>
+                        </td>
+                    </tr>
+                `;
             });
         });
 
-    // Show alerts based on URL status
+    // 2. Handle Delete Function
+    function deleteRoom(id) {
+        if(confirm("Permanently remove room " + id + "?")) {
+            window.location.href = "DeleteRoomServlet?id=" + id;
+        }
+    }
+
+    // Show alerts if coming back from a delete
     const params = new URLSearchParams(window.location.search);
-    if(params.get('status') === 'success') alert('Room added successfully!');
-    if(params.get('status') === 'error') alert('Error: Room number might already exist.');
+    if(params.get('msg') === 'deleted') alert("Room deleted successfully!");
 </script>
+
 </body>
 </html>
