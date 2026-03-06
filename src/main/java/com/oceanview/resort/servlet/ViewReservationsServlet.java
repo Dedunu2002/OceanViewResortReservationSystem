@@ -31,12 +31,120 @@ public class ViewReservationsServlet extends HttpServlet {
         out.println("body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; }");
 
         // Side Navigation Styling
-        out.println(".sidebar { width: 260px; background: var(--primary); color: white; height: 100vh; position: fixed; padding-top: 30px; }");
-        out.println(".sidebar-brand { padding: 0 30px 40px; font-size: 1.2rem; font-weight: bold; color: var(--accent); letter-spacing: 2px; }");
-        out.println(".nav-item { padding: 15px 30px; display: flex; align-items: center; color: #cbd5e1; text-decoration: none; transition: 0.3s; font-size: 14px; }");
-        out.println(".nav-item:hover { background: rgba(255,255,255,0.05); color: white; }");
-        out.println(".nav-item.active { background: var(--accent); color: var(--primary); font-weight: bold; }");
-        out.println(".nav-item i { margin-right: 15px; width: 20px; }");
+        out.println(".sidebar {\n" +
+                "            width: 300px;\n" +
+                "            background: var(--primary);\n" +
+                "            color: white;\n" +
+                "            height: 100vh;\n" +
+                "            position: fixed;\n" +
+                "            display: flex;\n" +
+                "            flex-direction: column;\n" +
+                "            box-shadow: 10px 0 30px rgba(0,0,0,0.1);\n" +
+                "            z-index: 100;\n" +
+                "        }");
+        out.println(".logo-container {\n" +
+                "            padding: 40px 30px;\n" +
+                "            display: flex;\n" +
+                "            align-items: center;\n" +
+                "            gap: 15px;\n" +
+                "            border-bottom: 1px solid rgba(255,255,255,0.05);\n" +
+                "        }");
+        out.println(".logo-icon {\n" +
+                "            width: 45px;\n" +
+                "            height: 45px;\n" +
+                "            background: linear-gradient(135deg, var(--accent), #e2c275);\n" +
+                "            border-radius: 10px;\n" +
+                "            display: flex;\n" +
+                "            align-items: center;\n" +
+                "            justify-content: center;\n" +
+                "            font-size: 1.5rem;\n" +
+                "            color: var(--primary);\n" +
+                "            box-shadow: 0 4px 15px var(--accent-glow);\n" +
+                "        }");
+        out.println(".logo-text {\n" +
+                "            font-family: 'Playfair Display', serif; /* Elegant Serif */\n" +
+                "            font-weight: 700;\n" +
+                "            letter-spacing: 1px;\n" +
+                "            font-size: 1.1rem;\n" +
+                "            color: var(--accent);\n" +
+                "            text-transform: uppercase;\n" +
+                "        }");
+        out.println(".role-card-container {\n" +
+                "            padding: 20px 30px;\n" +
+                "        }");
+        out.println(".role-card {\n" +
+                "            background: var(--secondary);\n" +
+                "            padding: 15px;\n" +
+                "            border-radius: 12px;\n" +
+                "            border: 1px solid rgba(201, 162, 77, 0.2);\n" +
+                "            display: flex;\n" +
+                "            align-items: center;\n" +
+                "            gap: 12px;\n" +
+                "        }");
+        out.println(".status-pulse {\n" +
+                "            width: 8px;\n" +
+                "            height: 8px;\n" +
+                "            background: #48bb78;\n" +
+                "            border-radius: 50%;\n" +
+                "            box-shadow: 0 0 8px #48bb78;\n" +
+                "            animation: pulse 2s infinite;\n" +
+                "        }");
+        out.println(".role-info span {\n" +
+                "            display: block;\n" +
+                "            font-size: 0.75rem;\n" +
+                "            color: var(--accent);\n" +
+                "            text-transform: uppercase;\n" +
+                "            letter-spacing: 1px;\n" +
+                "            font-weight: 600;\n" +
+                "        }");
+        out.println(".nav-scroll {\n" +
+                "            flex-grow: 1;\n" +
+                "            overflow-y: auto;\n" +
+                "            padding: 10px 20px;\n" +
+                "        }");
+        out.println(".section-label {\n" +
+                "            font-size: 0.7rem;\n" +
+                "            color: var(--text-muted);\n" +
+                "            text-transform: uppercase;\n" +
+                "            letter-spacing: 2px;\n" +
+                "            margin: 25px 15px 10px;\n" +
+                "            display: block;\n" +
+                "        }");
+        out.println(".nav-link {\n" +
+                "            display: flex;\n" +
+                "            align-items: center;\n" +
+                "            gap: 15px;\n" +
+                "            padding: 12px 15px;\n" +
+                "            color: rgba(255,255,255,0.7);\n" +
+                "            text-decoration: none;\n" +
+                "            border-radius: 8px;\n" +
+                "            transition: 0.3s;\n" +
+                "            margin-bottom: 5px;\n" +
+                "            font-size: 0.9rem;\n" +
+                "        }");
+        out.println(".nav-link i {\n" +
+                "            width: 20px;\n" +
+                "            text-align: center;\n" +
+                "            font-size: 1.1rem;\n" +
+                "            color: var(--accent);\n" +
+                "        }");
+        out.println(".nav-link:hover, .nav-link.active {\n" +
+                "            background: rgba(201, 162, 77, 0.1);\n" +
+                "            color: var(--accent);\n" +
+                "        }");
+        out.println(".nav-link.active {\n" +
+                "            background: var(--accent);\n" +
+                "            color: var(--primary);\n" +
+                "        }");
+        out.println(".nav-link.active i { color: var(--primary); }");
+        out.println("@keyframes pulse {\n" +
+                "            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7); }\n" +
+                "            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(72, 187, 120, 0); }\n" +
+                "            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(72, 187, 120, 0); }\n" +
+                "        }");
+
+
+
 
         // Main Content Area
         out.println(".main-content { margin-left: 260px; flex: 1; padding: 40px; }");
@@ -72,15 +180,59 @@ public class ViewReservationsServlet extends HttpServlet {
 
         // SIDE NAVIGATION
         out.println("<div class='sidebar'>");
-        out.println("<div class='sidebar-brand'>OCEAN VIEW</div>");
-        out.println("<a href='" + homePage + "' class='nav-item'><i class='fa-solid fa-gauge'></i> Dashboard</a>");
-        out.println("<a href='view-reservations' class='nav-item active'><i class='fa-solid fa-calendar-check'></i> Reservations</a>");
-        out.println("<a href='room-status' class='nav-item'><i class='fa-solid fa-bed'></i> Room Status</a>");
-        if ("ADMIN".equals(role)) {
-            out.println("<a href='manage-staff.html' class='nav-item'><i class='fa-solid fa-users-gear'></i> Staff Management</a>");
-        }
-        out.println("<a href='logout' class='nav-item' style='margin-top:auto;'><i class='fa-solid fa-right-from-bracket'></i> Sign Out</a>");
+        out.println("<div class='logo-container'>");
+        out.println("<img class='logo-icon' src='images/logo.png' >");
+        out.println("<div class='logo-text'>Ocean View<br><span style='font-size: 0.7rem; opacity: 0.8;'>Resort & Spa</span></div>");
         out.println("</div>");
+
+        out.println("<div class='role-card-container'>");
+        out.println("<div class='role-card'>");
+        out.println("<div class='status-pulse'></div>");
+        out.println(" <div class='role-info'>");
+        out.println("<span><strong>" + user + " (" + role + ")</strong></span>");
+
+        out.println("</div>");
+        out.println("</div>");
+        out.println("</div>");
+
+        out.println("<div class='nav-scroll'>");
+        out.println("<a href='" + homePage + "' class='nav-link'><i class='fa-solid fa-gauge'></i> Dashboard</a>");
+
+        out.println("<span class='section-label'>System Oversight</span>");
+
+
+        out.println("<a href='index.html' class='nav-link'><i class='fa-solid fa-calendar-plus'></i> Add New Reservation</a>");
+
+        out.println("<a href='view-reservations' class='nav-link active'><i class='fa-solid fa-rectangle-list'></i> View Reservations </a>");
+        if ("ADMIN".equals(role)) {
+            out.println("<a href='daily-summary' class='nav-link'><i class='fa-solid fa-file-invoice-dollar'></i> Daily Summary</a>");
+        }
+        if ("ADMIN".equals(role)) {
+            out.println("<a href='update-rates.html' class='nav-link'><i class='fa-solid fa-tags'></i> Room Pricing</a>");
+        }
+
+
+        out.println("<span class='section-label'>Operations</span>");
+        if ("ADMIN".equals(role)) {
+            out.println("<a href='manage-staff.html' class='nav-link'><i class='fa-solid fa-users-gear'></i> Staff Management</a>");
+        }
+
+        out.println("<a href='help.html' class='nav-link'><i class='fa-solid fa-book-open'></i> Operational Guide </a>");
+        if ("ADMIN".equals(role)) {
+            out.println("<a href='add-room-category.html' class='nav-link'><i class='fa-solid fa-tags'></i>Add Room Category</a> ");
+        }
+        if ("ADMIN".equals(role)) {
+            out.println("<a href='add-room.html' class='nav-link'><i class='fa-solid fa-tags'></i>Room Managment</a> ");
+        }
+
+
+        out.println("<a href='logout' class='nav-link' style='color: #fc8181;'> <i class='fa-solid fa-right-from-bracket' style='color: #fc8181;'></i> Logout </a>");
+        out.println("</div>");
+        out.println("</div>");
+
+
+
+
 
         // MAIN CONTENT
         out.println("<div class='main-content'>");

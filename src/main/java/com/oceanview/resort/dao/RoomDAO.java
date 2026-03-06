@@ -12,6 +12,19 @@ import java.util.List;
  */
 public class RoomDAO {
 
+    // This holds the actual record of a specific room
+    public static class Room {
+        public String roomNumber;
+        public String roomType;
+        public String status;
+
+        public Room(String roomNumber, String roomType, String status) {
+            this.roomNumber = roomNumber;
+            this.roomType = roomType;
+            this.status = status;
+        }
+    }
+
     // A simple inner class to hold room data
     public static class RoomInventory {
         public String type;
@@ -24,6 +37,51 @@ public class RoomDAO {
             this.occupied = occupied;
             this.total = total;
             this.vacant = Math.max(0, total - occupied);
+        }
+    }
+
+    /**
+     * Fetches all rooms from the database for the View Rooms table.
+     */
+    public List<Room> getAllRooms() {
+        List<Room> rooms = new ArrayList<>();
+        String sql = "SELECT * FROM rooms ORDER BY room_number ASC";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                rooms.add(new Room(
+                        rs.getString("room_number"),
+                        rs.getString("room_type"),
+                        rs.getString("status")
+                ));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching rooms: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return rooms;
+    }
+
+    // --- 3. NEW METHOD: DELETE A ROOM ---
+    /**
+     * Deletes a specific room record using the unique Room Number.
+     */
+    public boolean deleteRoom(String roomNumber) {
+        String sql = "DELETE FROM rooms WHERE room_number = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, roomNumber);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error deleting room: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
 
